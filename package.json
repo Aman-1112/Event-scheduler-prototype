@@ -1,0 +1,15 @@
+{
+  "name": "event-scheduler-api",
+  "version": "1.0.0",
+  "description": "creates and delivers events",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "aman raj",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2"
+  }
+}
