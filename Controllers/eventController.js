@@ -1,67 +1,44 @@
 //all handler functions
-const e = require('express');
+
 const eventModel = require('../Models/eventModel');
+const ApiFeatures = require('../utils/apifeatures');
+
+exports.cheapAndLiveMiddleware = (req, res, next) => {
+	const todayDate = new Date();
+	req.query.start = { gte: todayDate };
+	req.query.sort = 'entryFee';
+	req.query.fields = 'title venue start end entryFee ';
+	next();
+};
 
 exports.getAllEvents = async (req, res) => {
-	let excluded = ['page', 'limit', 'fields', 'sort'];
 	try {
-		//if we await for the method on Model then it returns result e.g. await eventModel.find()
-		//and if we don't then it returns document/instance(obj) of model/query e.g. eventModel.find()
-		
-		//filtering
-		let queryParams = { ...req.query };
-		excluded.map((e) => delete queryParams[e]);
-		
-			// query with parameter
-			queryInJson = JSON.stringify(queryParams);
-			
-			let regex = new RegExp(/\bgte|lte|gt|lt\b/, 'ig');
-			queryInJson = queryInJson.replace(regex, (matched) => {
-				return `$${matched}`;
-			});
-			queryParams = JSON.parse(queryInJson);
-			
-			//?{entryFee:{$lte:80}}
-			//? string or number
-			//? {entryFee:{'$lte':'80'}}
+		// if we await for the method on Model then it returns result e.g. await eventModel.find()
+		// and if we don't then it returns document/instance(obj) of model/query object e.g. eventModel.find()
+		// to this query object multiple query chaining is possible like .skip,.limit,.sort ...
 
-		let query = eventModel.find(queryParams);
-		//to this query multiple query chaining is possible like .skip,.limit,.sort ...
+		let apifeatures = new ApiFeatures(eventModel.find(), req.query)
+			.filter()
+			.pagination()
+			.sorting()
+			.projection();
+		// new ApiFeatures() return object
+		// onto which method can be applied
+		// method chaining is possible only because each method return this(i.e. current_object)
 
-		//pagination and limit
-		const page=req.query.page||1;
-		const limit=req.query.limit||10;
-		const skip=(page-1)*limit;
-
-		query=query.skip(skip).limit(limit);
-
-		//sorting
-		if(req.query.sort){
-			//? what error to give if query is not in proper format
-			//? also why this format only
-			let sort=req.query.sort.replace(/,/g,' ');
-			query=query.sort(sort);
-		}else{
-			query=query.sort('createdAt');
-		}
-
-		//projection
-		if(req.query.fields){
-			let fields=req.query.fields.replace(/,/g,' ');
-			query =  query.select(fields);
-		}else{
-			query=query.select('-__v');
-		}
-
-		const events=await query;
+		//! awaiting means to execute the query /query object
+		const events = await apifeatures.query;
 		res.status(200).json({
 			status: 'success',
-			results: query.length,
+			results: events.length,
 			body: events,
 		});
 	} catch (e) {
 		console.error(e);
-		res.status(400).send(e.message);
+		res.status(400).json({
+			status: 'fail',
+			error: e.message,
+		});
 	}
 };
 
@@ -75,22 +52,30 @@ exports.createEvent = async (req, res) => {
 		});
 	} catch (e) {
 		console.error(e);
-		console.log('😖:' + e.message);
-		res.status(400).send(e.message);
+		res.status(400).json({
+			status: 'fail',
+			error: e.message,
+		});
 	}
 };
-//?if can't find that id what error to sent
+
 exports.getEvent = async (req, res) => {
 	try {
 		const id = req.params.eventId;
 		const event = await eventModel.findById(id);
+
+		if (event == null) throw new Error(`event of id: ${id} doesn't exist`);
+
 		res.status(200).json({
 			status: 'success',
 			body: event,
 		});
 	} catch (e) {
 		console.error(e);
-		res.status(400).send(e.message);
+		res.status(404).json({
+			status: 'fail',
+			error: e.message,
+		});
 	}
 };
 
@@ -102,13 +87,19 @@ exports.updateEvent = async (req, res) => {
 			runValidators: true,
 			new: true,
 		});
+
+		if (event == null) throw new Error(`event of id: ${id} doesn't exist`);
+
 		res.status(201).json({
 			status: 'success',
 			body: event,
 		});
 	} catch (e) {
 		console.error(e);
-		res.status(400).send(e.message);
+		res.status(400).json({
+			status: 'fail',
+			error: e.message,
+		});
 	}
 };
 
@@ -120,9 +111,14 @@ exports.deleteEvent = async (req, res) => {
 			status: 'success',
 			body: event,
 		});
+
+		if (event == null) throw new Error(`event of id: ${id} doesn't exist`);
 	} catch (e) {
 		console.error(e);
-		res.status(400).send(e.message);
+		res.status(400).json({
+			status: 'fail',
+			error: e.message,
+		});
 	}
 };
 

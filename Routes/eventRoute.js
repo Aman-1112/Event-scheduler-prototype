@@ -1,4 +1,4 @@
-const { getAllEvents, createEvent, getEvent, updateEvent, deleteEvent } = require('../Controllers/eventController');
+const { getAllEvents, createEvent, getEvent, updateEvent, deleteEvent, cheapAndLiveMiddleware } = require('../Controllers/eventController');
 const express = require('express');
 const eventRouter = express.Router();
 
@@ -14,5 +14,12 @@ eventRouter
 .get(getEvent)
 .patch(updateEvent)
 .delete(deleteEvent)
+
+// alias route
+eventRouter
+.route('/events/cheap-live-events')
+// added middleware in middleware stack
+//?where to add middleware 
+.get(cheapAndLiveMiddleware,getAllEvents)
 
 module.exports = eventRouter;

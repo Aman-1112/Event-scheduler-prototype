@@ -1,12 +1,14 @@
 const mongoose = require('mongoose');
 
+//?min length max length
 const eventSchema = new mongoose.Schema({
 	title: {
 		type: String,
 
 		//schema type options
+		trim:true,
 		lowercase: true,
-		unique: [true, 'each event title must be unique'],
+		unique: true,
 		required: [true, 'an event must have some title']
 		//
 	},
@@ -36,12 +38,13 @@ const eventSchema = new mongoose.Schema({
 			required: [true, 'an event must have precise state']
 		}
 	},
-	//? how to compare dates in mongoose 
-	//? could not get this in case of findbyIdandUpdate
+	//?date part is all wrong
 	start: {
 		type: Date,
 		validate: {
 			validator: function () {
+				//? how to compare dates in mongoose 
+				//? could not get this in case of findbyIdandUpdate
 				console.log(this._update)
 				console.log("this=",this);
 				console.log("this.start"+this.start);
@@ -71,7 +74,6 @@ const eventSchema = new mongoose.Schema({
 		],
 		required: [true, 'an event must have a end date']
 	},
-	//? time
 	entryFee:{
 		type:Number,
 		default:0
@@ -87,7 +89,7 @@ const eventSchema = new mongoose.Schema({
 	}
 },{timestamps:true});
 //set schema option timestamp:true makes mongoose automatically add two fields
-//createdAt and updatedAt which will be filled and updated automaticallyl
+//createdAt and updatedAt which will be filled and updated automatically
 
 const eventModel = mongoose.model('events', eventSchema);
 module.exports = eventModel;
