@@ -1,11 +1,11 @@
-const { getAllEvents, createEvent, getEvent, updateEvent, deleteEvent, cheapAndLiveMiddleware } = require('../Controllers/eventController');
+const { getAllEvents, createEvent, getEvent, updateEvent, deleteEvent, cheapAndLiveMiddleware,getEventStats } = require('../Controllers/eventController');
 const express = require('express');
 const eventRouter = express.Router();
 
-//sub-route
+// sub-route
 eventRouter
 .route('/events')
-//httpmethod(handler function)
+// httpmethod(handler function)
 .get(getAllEvents)
 .post(createEvent)
 
@@ -14,6 +14,10 @@ eventRouter
 .get(getEvent)
 .patch(updateEvent)
 .delete(deleteEvent)
+
+eventRouter
+.route('/events/stats')
+.get(getEventStats)
 
 // alias route
 eventRouter

@@ -8,6 +8,8 @@ exports.cheapAndLiveMiddleware = (req, res, next) => {
 	req.query.start = { gte: todayDate };
 	req.query.sort = 'entryFee';
 	req.query.fields = 'title venue start end entryFee ';
+
+	// calls out the next middleware in stack
 	next();
 };
 
@@ -113,6 +115,86 @@ exports.deleteEvent = async (req, res) => {
 		});
 
 		if (event == null) throw new Error(`event of id: ${id} doesn't exist`);
+	} catch (e) {
+		console.error(e);
+		res.status(400).json({
+			status: 'fail',
+			error: e.message,
+		});
+	}
+};
+
+// aggregation pipeline
+exports.getEventStats = async (req, res) => {
+	try {
+		// aggregate take array of stages
+		// documents (from a collection) are passed through the pipeline of multiple stages
+		// result of prev stage is passed down to current stage
+		// so only certain fields are available
+
+		const stats = await eventModel.aggregate([
+			// stage 1
+			// $aggregation pipeline operators or $mongodb_operators
+			{
+				$match: {
+					start: { $gte: new Date() },
+				},
+			},
+			// result of stage 1 is passed to stage2 (imp.)
+			// stage 2
+			{
+				$group: {
+					//! _id takes arg about which grouping is to be done
+					//! others operators are accumulators only
+					_id: { $month: '$start' },
+					numEvents: { $sum: 1 },
+					avgEntryFee: { $avg: '$entryFee' },
+					minEntryFee: { $min: '$entryFee' },
+					maxEntryFee: { $max: '$entryFee' },
+					event: { $push: '$title' },
+				},
+			},
+			// stage 3
+			{
+				$addFields: {
+					month: {
+						$let: {
+							// define variable in vars
+							vars: {
+								monthsInString: [,'Jan','Feb','Mar','Apr','May','Jun','Jul','Sep','Oct','Nov','Dec',
+								],
+							},
+							// used that vars in in
+							in: {
+								$arrayElemAt: ['$$monthsInString', '$_id'],
+								// [array_name,index] return element
+							},
+						},
+					},
+				},
+			},
+			// stage ..
+
+			// 0 to hide
+			// to show
+			{
+				$project: {
+					_id: 0,
+				},
+			},
+			// ...
+			{
+				$sort: {
+					avgEntryFee: 1,
+					month: 1,
+				},
+			},
+		]);
+		res.status(200).json({
+			status: 'success',
+			results: stats.length,
+			body: stats,
+		});
 	} catch (e) {
 		console.error(e);
 		res.status(400).json({
