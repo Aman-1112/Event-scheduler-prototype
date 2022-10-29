@@ -13,11 +13,13 @@ mongoose
 	.catch((err) => console.error(err));
 
 const eventRouter = require('./Routes/eventRoute');
+const userRouter = require('./Routes/userRoute')
 app.use(express.json());
 
 //! app.use used to apply middleware
 //whenver this route hits with req then corresponding router(middleware) runs
 app.use('/api/v1', eventRouter);
+app.use('/api/v1/users',userRouter)
 
 const port = process.env.PORT;
 app.listen(port, () => {

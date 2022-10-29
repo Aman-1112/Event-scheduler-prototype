@@ -33,13 +33,13 @@ exports.getAllEvents = async (req, res) => {
 		res.status(200).json({
 			status: 'success',
 			results: events.length,
-			body: events,
+			body: events
 		});
 	} catch (e) {
 		console.error(e);
 		res.status(400).json({
 			status: 'fail',
-			error: e.message,
+			error: e.message
 		});
 	}
 };
@@ -50,13 +50,13 @@ exports.createEvent = async (req, res) => {
 		res.status(200).json({
 			status: 'success',
 			results: event.length,
-			body: event,
+			body: event
 		});
 	} catch (e) {
 		console.error(e);
 		res.status(400).json({
 			status: 'fail',
-			error: e.message,
+			error: e.message
 		});
 	}
 };
@@ -70,13 +70,13 @@ exports.getEvent = async (req, res) => {
 
 		res.status(200).json({
 			status: 'success',
-			body: event,
+			body: event
 		});
 	} catch (e) {
 		console.error(e);
 		res.status(404).json({
 			status: 'fail',
-			error: e.message,
+			error: e.message
 		});
 	}
 };
@@ -87,20 +87,20 @@ exports.updateEvent = async (req, res) => {
 		const id = req.params.eventId;
 		const event = await eventModel.findByIdAndUpdate(id, req.body, {
 			runValidators: true,
-			new: true,
+			new: true
 		});
 
 		if (event == null) throw new Error(`event of id: ${id} doesn't exist`);
 
 		res.status(201).json({
 			status: 'success',
-			body: event,
+			body: event
 		});
 	} catch (e) {
 		console.error(e);
 		res.status(400).json({
 			status: 'fail',
-			error: e.message,
+			error: e.message
 		});
 	}
 };
@@ -111,7 +111,7 @@ exports.deleteEvent = async (req, res) => {
 		const event = await eventModel.findByIdAndDelete(id);
 		res.status(204).json({
 			status: 'success',
-			body: event,
+			body: event
 		});
 
 		if (event == null) throw new Error(`event of id: ${id} doesn't exist`);
@@ -119,7 +119,7 @@ exports.deleteEvent = async (req, res) => {
 		console.error(e);
 		res.status(400).json({
 			status: 'fail',
-			error: e.message,
+			error: e.message
 		});
 	}
 };
@@ -137,8 +137,8 @@ exports.getEventStats = async (req, res) => {
 			// $aggregation pipeline operators or $mongodb_operators
 			{
 				$match: {
-					start: { $gte: new Date() },
-				},
+					start: { $gte: new Date() }
+				}
 			},
 			// result of stage 1 is passed to stage2 (imp.)
 			// stage 2
@@ -151,8 +151,8 @@ exports.getEventStats = async (req, res) => {
 					avgEntryFee: { $avg: '$entryFee' },
 					minEntryFee: { $min: '$entryFee' },
 					maxEntryFee: { $max: '$entryFee' },
-					event: { $push: '$title' },
-				},
+					event: { $push: '$title' }
+				}
 			},
 			// stage 3
 			{
@@ -161,17 +161,29 @@ exports.getEventStats = async (req, res) => {
 						$let: {
 							// define variable in vars
 							vars: {
-								monthsInString: [,'Jan','Feb','Mar','Apr','May','Jun','Jul','Sep','Oct','Nov','Dec',
-								],
+								monthsInString: [
+									,
+									'Jan',
+									'Feb',
+									'Mar',
+									'Apr',
+									'May',
+									'Jun',
+									'Jul',
+									'Sep',
+									'Oct',
+									'Nov',
+									'Dec'
+								]
 							},
 							// used that vars in in
 							in: {
-								$arrayElemAt: ['$$monthsInString', '$_id'],
+								$arrayElemAt: ['$$monthsInString', '$_id']
 								// [array_name,index] return element
-							},
-						},
-					},
-				},
+							}
+						}
+					}
+				}
 			},
 			// stage ..
 
@@ -179,27 +191,27 @@ exports.getEventStats = async (req, res) => {
 			// to show
 			{
 				$project: {
-					_id: 0,
-				},
+					_id: 0
+				}
 			},
 			// ...
 			{
 				$sort: {
 					avgEntryFee: 1,
-					month: 1,
-				},
-			},
+					month: 1
+				}
+			}
 		]);
 		res.status(200).json({
 			status: 'success',
 			results: stats.length,
-			body: stats,
+			body: stats
 		});
 	} catch (e) {
 		console.error(e);
 		res.status(400).json({
 			status: 'fail',
-			error: e.message,
+			error: e.message
 		});
 	}
 };

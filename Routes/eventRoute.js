@@ -1,4 +1,5 @@
 const { getAllEvents, createEvent, getEvent, updateEvent, deleteEvent, cheapAndLiveMiddleware,getEventStats } = require('../Controllers/eventController');
+const { TokenAuthentication} = require('../Controllers/authController');
 const express = require('express');
 const eventRouter = express.Router();
 
@@ -6,7 +7,7 @@ const eventRouter = express.Router();
 eventRouter
 .route('/events')
 // httpmethod(handler function)
-.get(getAllEvents)
+.get(TokenAuthentication,getAllEvents)//added tokenAuth middleware to protect the route
 .post(createEvent)
 
 eventRouter
