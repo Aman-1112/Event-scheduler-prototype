@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
+const crypto = require('crypto');
 
 const userSchema = new mongoose.Schema({
 	name: {
@@ -15,7 +16,7 @@ const userSchema = new mongoose.Schema({
 		required: [true, 'please provide your email'],
 		validate: {
 			validator: function (eml) {
-				//using validator pkg for email validation
+				// using validator pkg for email validation
 				return validator.isEmail(eml);
 			},
 			message: 'please enter a valid email'
@@ -47,16 +48,23 @@ const userSchema = new mongoose.Schema({
 
 		required: [true, 'please enter you gender [male|female|other]']
 	},
-	passwordChangedAt: Date
+	role: {
+		type: String,
+		enum: ['user', 'admin', 'organizer'],
+		default: 'user'
+	},
+	passwordChangedAt: Date,
+	passwordResetToken: String,
+	passwordResetTokenExpiry: Date
 	//? problem in joining two collections
 	//? eventsRegistered: {
 	//? 	type: Object
 	//? }
 });
 
-//document middleware
+// document middleware
 userSchema.pre('save', async function (next) {
-	//this pre-save-middleware runs only for creation not for updation
+	// this pre-save-middleware runs only for creation not for updation
 	// doc.isModified is method on doc tells if it is newly saved / updated
 	if (this.isModified('password')) {
 		// if it is then use bcrypt to encrypt
@@ -74,21 +82,45 @@ userSchema.pre('save', async function (next) {
 	next();
 });
 
-//instance method
+// instance method
 // will be available on every single doc of this schema
 userSchema.methods.verifyPassword = async function (provided_password) {
-	//if field is set to false
-	//this object does'nt contain that field obviously
+	// if field is set to false
+	// this object does'nt contain that field obviously
+	// use .select('+password')
 	return await bcrypt.compare(provided_password, this.password);
 };
 
 userSchema.methods.PasswordChangeAfterJwtIat = function (jwtIat) {
 	if (this.passwordChangedAt) {
 		const passwordChangedAt = this.passwordChangedAt.getTime() / 100;
-		return passwordChangedAt > jwtIat;
+		return passwordChangedAt < jwtIat;
 	}
 	return false;
 };
+
+// creating resetToken using crypto module
+userSchema.methods.generateResetToken = function () {
+	const resetToken = crypto.randomBytes(32).toString('hex');
+	// stored hashed resetToken in database
+	this.passwordResetToken = crypto
+		.createHash('sha256')
+		.update(resetToken)
+		.digest('hex');
+	this.passwordResetTokenExpiry = Date.now() + 5 * 60 * 1000; //5min expiry
+
+	return resetToken;
+};
+
+userSchema.pre('save', function (next) {
+	// isModified=true if field has changed or newly created
+	// isNew =true if doc is newly created
+	if (this.isModified('password') && !this.isNew) {
+		//- 2 sec so being safer side that passwChanged shouldn't be get > token
+		this.passwordChangedAt = Date.now() - 2000;
+	}
+	next();
+});
 
 const userModel = mongoose.model('users', userSchema);
 

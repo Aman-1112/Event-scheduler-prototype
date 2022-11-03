@@ -1,5 +1,5 @@
 const { getAllEvents, createEvent, getEvent, updateEvent, deleteEvent, cheapAndLiveMiddleware,getEventStats } = require('../Controllers/eventController');
-const { TokenAuthentication} = require('../Controllers/authController');
+const { TokenAuthentication,onlyAllowed} = require('../Controllers/authController');
 const express = require('express');
 const eventRouter = express.Router();
 
@@ -14,7 +14,7 @@ eventRouter
 .route('/event/:eventId')
 .get(getEvent)
 .patch(updateEvent)
-.delete(deleteEvent)
+.delete(TokenAuthentication,onlyAllowed("admin"),deleteEvent)
 
 eventRouter
 .route('/events/stats')
