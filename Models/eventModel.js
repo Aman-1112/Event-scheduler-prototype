@@ -109,7 +109,7 @@ eventSchema.virtual('days-left').get(function(){
 // 1.document middleware
 // it runs before or after the document is saved
 
-//? 'save' middleware only runs for .save() and .create() method only
+//pre-save middleware runs only when doc is saved or created
 //? how does it is showing virtual properties
 eventSchema.pre('save',function(next){
 	console.log("pre-save-middleware-1");

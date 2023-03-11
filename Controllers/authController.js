@@ -9,6 +9,7 @@ const sendingMail = require('../utils/sendEmail');
 
 exports.Signup = async (req, res) => {
 	try {
+		//here object destructuring is used so user cannot decide role on their own
 		const { name, email, password, confirmPassword, gender } = req.body;
 		const user = await userModel.create({
 			name,
@@ -78,7 +79,6 @@ exports.TokenAuthentication = async (req, res, next) => {
 		token = req.headers.authorization.split(' ')[1];
 	}
 	if (!token) {
-		//? how to create custom error handling for next(blah..)
 		return next(new Error('You do not have permission to access this route'));
 	}
 	// validating token
