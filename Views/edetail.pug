@@ -1,0 +1,35 @@
+extends base
+
+block content
+    .image-container
+      img(src=`/image/events/${event.photo}`, alt='event image')
+    .event-details
+      .heading
+        h1=`${event.title[0].toUpperCase()+event.title.slice(1)}`
+        if(!user)
+          a(href='/login')
+            button Book Now
+        else if(event.usersRegistered.includes(user._id))
+          button Booked
+        else
+          button#event-book-btn Book Now
+      hr
+      p.time-place
+        span=`${event.start.toLocaleString('en-us',{month:'long',day:'numeric',weekday:'short',year:'numeric'})}`
+        span=`${event.venue.street},${event.venue.city},${event.venue.state}`
+      br
+      p #{event.maxGuestLimit-event.usersRegistered.length} seats remaining
+      br
+      p=`${event.start.toLocaleTimeString('en-us',{hour:'2-digit',minute:'2-digit'})} - ${event.end.toLocaleTimeString('en-us',{hour:'2-digit',minute:'2-digit'})} | ? hours`
+      br
+      .content
+        .organiser
+          h4 Organiser
+          .organiser-detail
+            img.avatar(src=`/image/users/${event.organiser.photo}`)
+            div
+              p= event.organiser.name
+              p= event.organiser.email
+        .about
+          h4 About
+          p= event.description

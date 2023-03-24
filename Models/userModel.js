@@ -24,6 +24,10 @@ const userSchema = new mongoose.Schema({
 		// an alternate way
 		// validate:[validator.isEmail,"please enter a valid email"]
 	},
+	photo: {
+		type: String,
+		default:'common-dp.jpeg'
+	},
 	password: {
 		type: String,
 		required: [true, 'please provide a password'],
@@ -50,16 +54,27 @@ const userSchema = new mongoose.Schema({
 	},
 	role: {
 		type: String,
-		enum: ['user', 'admin', 'organizer'],
+		enum: ['user', 'admin', 'organiser'],
 		default: 'user'
 	},
 	passwordChangedAt: Date,
 	passwordResetToken: String,
-	passwordResetTokenExpiry: Date
-	//? problem in joining two collections
-	//? eventsRegistered: {
-	//? 	type: Object
-	//? }
+	passwordResetTokenExpiry: Date,
+
+	eventsRegistered:[
+		{
+			type:mongoose.Schema.ObjectId,
+			ref:"events"
+		}
+	],
+	//? try to remove below for normal users
+	eventsCreated:[
+		{
+			type:mongoose.Schema.ObjectId,
+			ref:"events"
+		}
+	]
+
 });
 
 // document middleware

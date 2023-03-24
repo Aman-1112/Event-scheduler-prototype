@@ -1,4 +1,4 @@
-const { getAllEvents, createEvent, getEvent, updateEvent, deleteEvent, cheapAndLiveMiddleware,getEventStats } = require('../Controllers/eventController');
+const { getAllEvents, createEvent, getEvent, updateEvent, deleteEvent, cheapAndLiveMiddleware,getEventStats,handleUploadedEventPhoto,resizeUploadedEventPhoto, bookingTicket } = require('../Controllers/eventController');
 const { TokenAuthentication,onlyAllowed} = require('../Controllers/authController');
 const express = require('express');
 const eventRouter = express.Router();
@@ -8,7 +8,11 @@ eventRouter
 .route('/events')
 // httpmethod(handler function)
 .get(TokenAuthentication,getAllEvents)//added tokenAuth middleware to protect the route
-.post(createEvent)
+.post(TokenAuthentication,handleUploadedEventPhoto,resizeUploadedEventPhoto,createEvent)//? insert mw = onlyAllowed("organiser","admin")
+
+eventRouter
+.route('/book/event/:eventId')
+.patch(TokenAuthentication,bookingTicket)
 
 eventRouter
 .route('/event/:eventId')
@@ -17,7 +21,7 @@ eventRouter
 .delete(TokenAuthentication,onlyAllowed("admin"),deleteEvent)
 
 eventRouter
-.route('/events/stats')
+.route(onlyAllowed("admin"),'/events/stats')
 .get(getEventStats)
 
 // alias route

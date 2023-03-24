@@ -13,9 +13,9 @@ const eventSchema = new mongoose.Schema(
 			required: [true, 'an event must have some title'],
 			//
 		},
-		iconUrl: {
+		photo: {
 			type: String,
-			default: 'shorturl.at/CDNV2',
+			default: 'event.jpg',
 		},
 		description: {
 			type: String,
@@ -83,11 +83,17 @@ const eventSchema = new mongoose.Schema(
 			type: Number,
 			default: 100,
 		},
-		//?seats remaining
-		admin: {
-			type: String,
-			required: [true, 'please provide the admin name'],
+		organiser: {
+			type: mongoose.Schema.ObjectId,
+			ref:'users',
+			required: [true, 'please provide the organiser Id'],
 		},
+		usersRegistered:[
+			{
+				type:mongoose.Schema.ObjectId,
+				ref:'userModel'
+			}
+		]
 	},
 	{ timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );

@@ -1,0 +1,20 @@
+header
+    nav
+        a(href='/').logo EventEase
+        ul.nav-links
+            if user            
+                li
+                    a(href='/createEvent') Create Event
+                li
+                    a.logout-btn(href='#') Logout 
+                a.navbar-profile(href='/profile')
+                    .avatar
+                        img(src=`/image/users/${user.photo}`, alt='profile-image')
+                    h3=user.name
+            else
+                li
+                    a(href='/createEvent') Create Event
+                li
+                    a(href='/login') Login
+                li
+                    a(href='/signup') Sign Up

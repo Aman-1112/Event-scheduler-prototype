@@ -1,0 +1,62 @@
+extends base
+block content
+    .profile-container
+        img(src=`/image/users/${user.photo}`, alt='Profile Picture')
+        h1=user.name
+        div
+            p
+                b Email: 
+                | #{user.email}
+            p
+                b Gender: 
+                | #{user.gender}
+            p
+                b Role: 
+                | Event #{user.role}
+        hr
+        .tab-container
+            .tab(onclick="tab_selector(this,'update-detail')") update my Details
+            .tab(onclick="tab_selector(this,'update-password')") update my Password
+            .tab(onclick="tab_selector(this,'delete-account')") delete my Account
+        .form-content
+            form#del-acc-form.tab-content.delete-account
+                .form-group
+                label(for='del-password') password:
+                input#del-password(type='password', name='del-password')
+                button(type='submit') delete my account
+
+            form#update-pass-form.tab-content.update-password
+                .form-group
+                label(for='current-password') current password:
+                input#current-password(name='current_password', type='password')
+                .form-group
+                label(for='new-password') new password:
+                input#new-password(name='new_password', type='password')
+                .form-group
+                label(for='new-confirm-password') confirm new password:
+                input#new-cofirm-password(name='new_confirmPassword', type='password')
+                button(type='submit') Submit
+
+            form#update-detail-form.tab-content.update-detail
+                .form-group
+                label(for='username') Name:
+                input#name(type='text', name='name', required='',value=`${user.name}`)
+                .form-group
+                label(for='email') Email:
+                input#email(type='email', name='email', required='',value=`${user.email}`)
+                .form-group
+                label(for='photo') Choose a new photo:
+                input#update-photo(type='file'  name='photo')
+                .form-group
+                label(for='gender') Gender:
+                if(user.gender==='male')
+                    input#gender-male(type='radio', name='gender', value='male', required='',checked='')
+                    label.gender-male(for='gender-male') Male
+                    input#gender-female(type='radio', name='gender', value='female', required='')
+                    label.gender-female(for='gender-female') Female
+                else
+                    input#gender-male(type='radio', name='gender', value='male', required='')
+                    label.gender-male(for='gender-male') Male
+                    input#gender-female(type='radio', name='gender', value='female', required='',checked='')
+                    label.gender-female(for='gender-female') Female
+                button.save(type='submit') Save

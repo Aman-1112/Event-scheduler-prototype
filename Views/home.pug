@@ -1,0 +1,26 @@
+extends base
+
+block content
+    main
+        .banner
+            .banner-content
+                h1 Welcome to EventEase
+                p Your one-stop event management solution
+
+        .tab-container
+            .tab.active Tab 1
+            .tab Tab 2
+            .tab Tab 3
+            .tab Tab 4
+            .tab Tab 5
+            .tab Tab 6
+        each event in events
+            .event-card
+                a(href=`/event/${event._id}`)
+                    .card
+                        img(src='/image/business.jpg', alt='Image')   
+                        .card-body
+                            h3.card-title=`${event.title[0].toUpperCase()+event.title.slice(1)}`
+                            p.time-stamp=event.start.toLocaleString('en-us',{month:'long',day:'numeric',weekday:'short',year:'numeric'})
+                            p.location=`${event.venue.street},${event.venue.city},${event.venue.state}`
+                            p.seats #{event.maxGuestLimit-event.usersRegistered.length} seats remaining

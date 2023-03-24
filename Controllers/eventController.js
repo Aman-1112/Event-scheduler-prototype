@@ -1,3 +1,33 @@
+const sharp = require('sharp');
+const multer = require('multer');
+
+const multerStorage = multer.memoryStorage();
+
+const multerFilter = (req,file,cb)=>{
+	if(file.mimetype.startsWith('image'))
+		cb(null,true)
+	else
+		cb(new CustomError('Uploaded file is not an image ..please upload image only',400))
+}
+
+const upload = multer({
+	storage:multerStorage,
+	fileFilter:multerFilter
+})
+
+//make photo accessible in req.file
+exports.handleUploadedEventPhoto = upload.single('photo');
+
+exports.resizeUploadedEventPhoto = (req,res,next)=>{
+	if(!req.file) return next();
+
+	//processing image as buffer from memory
+	// and then storing to the disk
+	req.file.filename = `event-${Date.now()}.jpeg`;
+	sharp(req.file.buffer).resize(1200,400).toFormat('jpeg').jpeg({quality:90}).toFile(`public/image/events/${req.file.filename}`)
+	next();
+}
+
 //all handler functions
 
 const eventModel = require('../Models/eventModel');
@@ -45,11 +75,15 @@ exports.getAllEvents = async (req, res) => {
 };
 
 exports.createEvent = async (req, res) => {
+	console.log("CREATE EVENT BODY",req.body);
+	console.log("CREATE EVENT FILE",req.file);
 	try {
+		req.body.venue={street:req.body.street,city:req.body.city,state:req.body.state};
+		req.body.photo=req.file.filename;
+		req.body.organiser=req.user._id;
 		const event = await eventModel.create(req.body);
 		res.status(200).json({
 			status: 'success',
-			results: event.length,
 			body: event
 		});
 	} catch (e) {
@@ -64,7 +98,7 @@ exports.createEvent = async (req, res) => {
 exports.getEvent = async (req, res) => {
 	try {
 		const id = req.params.eventId;
-		const event = await eventModel.findById(id);
+		const event = await eventModel.findById(id).populate({path:'organiser',select:'name email photo'});
 
 		if (event == null) throw new Error(`event of id: ${id} doesn't exist`);
 
@@ -215,6 +249,31 @@ exports.getEventStats = async (req, res) => {
 		});
 	}
 };
+
+exports.bookingTicket=async(req,res,next)=>{
+	console.log('Booking Ticket.........')
+	try {
+		const id = req.params.eventId;
+
+		const event = await eventModel.findByIdAndUpdate(id,{$push:{usersRegistered:req.user._id}}, {
+			runValidators: true,
+			new: true
+		});
+
+		if (event == null) throw new CustomError(`event of id: ${id} doesn't exist`,400);
+
+		res.status(201).json({
+			status: 'success',
+			body: event
+		});
+	} catch (e) {
+		console.error(e);
+		res.status(400).json({
+			status: 'fail',
+			error: e.message
+		});
+	}
+}
 
 //Tips:
 

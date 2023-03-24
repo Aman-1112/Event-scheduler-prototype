@@ -1,0 +1,15 @@
+extends base
+
+block content
+    .container
+        h1 Login Page
+        form.login-form
+            .form-group
+                label(for='email') Email:
+                input#login-email(type='email', name='email', required='')
+            .form-group
+                label(for='password') Password:
+                input#login-password(type='password', name='password', required='')
+            button(type='submit') Login
+            .form-group
+                a(href='/forgotPassword') Forgot password?

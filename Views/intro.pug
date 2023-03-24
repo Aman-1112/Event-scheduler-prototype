@@ -1,0 +1,12 @@
+doctype html
+html
+    head
+        //- interpolation
+        // comment shows on html as commented html on browser
+        title Happy#{event}
+    body
+        //- unbuffered code i.e. which doesn't contribute to output 
+        -let x=8
+        //- buffered code i.e. vice versa
+        h1=x*2
+        h2 is the answer

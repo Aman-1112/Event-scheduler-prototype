@@ -5,28 +5,56 @@ const jwt = require('jsonwebtoken');
 const util = require('util');
 const crypto = require('crypto');
 
-const sendingMail = require('../utils/sendEmail');
+const Email = require('../utils/sendGrid');
+
+const createSendToken = (user,statusCode,res)=>{
+	const token = jwt.sign({id:user._id},process.env.SECRET_KEY,{
+		expiresIn:30*24*60*60*1000
+	})
+
+	const cookieOptions={
+		expires:new Date(Date.now()+30*24*60*60*1000),
+		// secure:true,
+		httpOnly:true
+	}
+	// token will be automatically be save in cookie
+	res.cookie('jwt',token,cookieOptions);
+
+	res.status(200).json({
+		status: 'success',
+		statusCode,
+		token: token
+	});
+}
 
 exports.Signup = async (req, res) => {
 	try {
+		console.log("BODY",req.body)
+		console.log("FILE",req.file)
 		//here object destructuring is used so user cannot decide role on their own
-		const { name, email, password, confirmPassword, gender } = req.body;
+		const { name, email, password, confirmPassword, gender,role } = req.body;
+		let photo;
+		if(req.file)photo=req.file.filename;
 		const user = await userModel.create({
 			name,
 			email,
+			photo,
 			password,
 			confirmPassword,
-			gender
+			gender,
+			role
 		});
 
-		const token = jwt.sign({ id: user._id }, process.env.SECRET_KEY, {
-			expiresIn: 600
-		});
+		createSendToken(user,200,res);
+		// or
+		// const token = jwt.sign({ id: user._id }, process.env.SECRET_KEY, {
+		// 	expiresIn: 30*24*60*60*1000
+		// });
 
-		res.status(200).json({
-			status: 'success',
-			token: token
-		});
+		// res.status(200).json({
+		// 	status: 'success',
+		// 	token: token
+		// });
 	} catch (e) {
 		console.log(e);
 		res.status(400).json({
@@ -55,14 +83,18 @@ exports.Login = async (req, res) => {
 			throw new Error('invalid email or password');
 
 		// if login success then send token
-		const token = jwt.sign({ id: user._id }, process.env.SECRET_KEY, {
-			expiresIn: 30 * 24 * 60 * 60 * 1000 //30 days
-		});
+			
+		createSendToken(user,200,res);
+		// or
+		// const token = jwt.sign({ id: user._id }, process.env.SECRET_KEY, {
+		// 	expiresIn: 30 * 24 * 60 * 60 * 1000 //30 days
+		// });
 
-		res.status(200).json({
-			status: 'success',
-			token
-		});
+		// res.status(200).json({
+		// 	status: 'success',
+		// 	token
+		// });
+
 	} catch (e) {
 		console.log(e);
 		res.status(400).json({
@@ -72,14 +104,32 @@ exports.Login = async (req, res) => {
 	}
 };
 
+//As cookie is secure and cannot be deleted so 
+//here we are replacing it with fakeone
+exports.Logout = (req,res,next)=>{
+	console.log("logout")
+	res.cookie('jwt','fakeone',{
+		expires:new Date(Date.now()+10000)
+	});
+	
+	res.status(200).json({
+		status:"success",
+		message:"logged out"
+	})
+}
+
 exports.TokenAuthentication = async (req, res, next) => {
+	console.log("Token Authentication Started")
 	let token;
 	// checking if header contains token or not
 	if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
 		token = req.headers.authorization.split(' ')[1];
+	}else if(req.cookies.jwt){
+		token = req.cookies.jwt;
 	}
+
 	if (!token) {
-		return next(new Error('You do not have permission to access this route'));
+		return next(new Error('You do not have permission to access this route..pls login or signup'));
 	}
 	// validating token
 	try {
@@ -107,13 +157,49 @@ exports.TokenAuthentication = async (req, res, next) => {
 		// passing down the data from one middleware to another middleware
 		// by attaching data to req. object
 		req.user = user;
+		res.locals.user = user;
+		console.log("Token Authentication Ended")
 		next();
 	} catch (error) {
+		console.log('got to catch block')
 		console.log(error);
 		next(error);
 	}
 };
 
+//Middleware to check if user has logged in or not
+exports.isLoggedIn = async (req, res, next) => {
+	try {
+		if(req.cookies.jwt){
+			let token = req.cookies.jwt;
+			
+			const decoded_payload = await util.promisify(jwt.verify)(
+				token,
+				process.env.SECRET_KEY
+			);
+			//check if user exist
+			const user = await userModel.findById(decoded_payload.id);
+			if (!user)return next();
+			
+			// check if password changed after jwt was issued
+			// becoz someone may have stolen jwt
+			if (
+				user.passwordChangedAt &&
+				user.PasswordChangeAfterJwtIat(decoded_payload.iat)
+				) {
+					return next();
+				}
+
+			res.locals.user = user;
+			next();
+		}else{
+			next();
+		}
+	}
+	catch (err) {
+		next();
+	
+}};
 // to pass the arguments (here roles) to a middleware
 // use wrapper function (here onlyAllowed)
 exports.onlyAllowed = (...roles) => {
@@ -142,20 +228,16 @@ exports.forgotPassword = async (req, res) => {
 			// sending the resetPasswordLink to the email
 			const resetLink = `${req.protocol}://${req.get(
 				'host'
-			)}/api/v1/users/resetPassword/${resetToken}`;
+			)}/${resetToken}`;
 			const message =
 				'Reset your password through given below link (valid for 5min)';
-
-			const whatsthis = await sendingMail({
-				receiver: req.body.email,
-				subject: message,
-				text: resetLink
-			});
-			//? console.log('whatsthis', whatsthis);
+			const eml= new Email(user,resetLink,message);
+			await eml.sendPasswordReset();
+			console.log('reset password email sent...');
 
 			res.status(200).json({
 				status: 'success',
-				message: 'reset Link send to your Email'
+				message: 'reset link send to your email'
 			});
 		} catch (e) {
 			user.passwordResetToken = undefined;
@@ -215,7 +297,7 @@ exports.resetPassword = async (req, res) => {
 		console.log(e);
 		res.status(400).json({
 			status: 'fail',
-			error: e.message
+			message: e.message
 		});
 	}
 };
@@ -265,10 +347,11 @@ exports.updateMyDetails = async (req, res) => {
 
 		// removing the fields that bad user not allowed to change
 		for (let prop in req.body) {
-			if (!['name', 'email', 'gender'].includes(prop)) {
+			if (!['name', 'email', 'gender','photo'].includes(prop)) {
 				delete req.body[prop];
 			}
 		}
+		if(req.file)	req.body.photo=req.file.filename;
 
 		// updating details
 		// pre-save-middlewares not required so didn't use .save()
@@ -306,7 +389,7 @@ exports.deleteMyAccount = async (req, res) => {
 		console.log(e);
 		res.status(400).json({
 			status: 'fail',
-			error: e.message
+			message: e.message
 		});
 	}
 };
