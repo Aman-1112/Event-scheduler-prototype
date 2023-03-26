@@ -12,7 +12,7 @@ block content
         else if(event.usersRegistered.includes(user._id))
           button Booked
         else
-          button#event-book-btn Book Now
+          button#event-book-btn(data-event-id=`${event._id}`) Book Now
       hr
       p.time-place
         span=`${event.start.toLocaleString('en-us',{month:'long',day:'numeric',weekday:'short',year:'numeric'})}`

@@ -29,8 +29,6 @@ const createSendToken = (user,statusCode,res)=>{
 
 exports.Signup = async (req, res) => {
 	try {
-		console.log("BODY",req.body)
-		console.log("FILE",req.file)
 		//here object destructuring is used so user cannot decide role on their own
 		const { name, email, password, confirmPassword, gender,role } = req.body;
 		let photo;
@@ -109,7 +107,7 @@ exports.Login = async (req, res) => {
 exports.Logout = (req,res,next)=>{
 	console.log("logout")
 	res.cookie('jwt','fakeone',{
-		expires:new Date(Date.now()+10000)
+		expires:new Date(Date.now()+10)
 	});
 	
 	res.status(200).json({
@@ -127,7 +125,6 @@ exports.TokenAuthentication = async (req, res, next) => {
 	}else if(req.cookies.jwt){
 		token = req.cookies.jwt;
 	}
-
 	if (!token) {
 		return next(new Error('You do not have permission to access this route..pls login or signup'));
 	}
@@ -139,7 +136,6 @@ exports.TokenAuthentication = async (req, res, next) => {
 			token,
 			process.env.SECRET_KEY
 		);
-
 		// checking if user of such id exist in db
 		// becoz someone may be using stolen jwt old token
 		const user = await userModel.findById(decoded_payload.id);
@@ -161,7 +157,6 @@ exports.TokenAuthentication = async (req, res, next) => {
 		console.log("Token Authentication Ended")
 		next();
 	} catch (error) {
-		console.log('got to catch block')
 		console.log(error);
 		next(error);
 	}

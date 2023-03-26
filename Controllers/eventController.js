@@ -250,31 +250,6 @@ exports.getEventStats = async (req, res) => {
 	}
 };
 
-exports.bookingTicket=async(req,res,next)=>{
-	console.log('Booking Ticket.........')
-	try {
-		const id = req.params.eventId;
-
-		const event = await eventModel.findByIdAndUpdate(id,{$push:{usersRegistered:req.user._id}}, {
-			runValidators: true,
-			new: true
-		});
-
-		if (event == null) throw new CustomError(`event of id: ${id} doesn't exist`,400);
-
-		res.status(201).json({
-			status: 'success',
-			body: event
-		});
-	} catch (e) {
-		console.error(e);
-		res.status(400).json({
-			status: 'fail',
-			error: e.message
-		});
-	}
-}
-
 //Tips:
 
 //nested object searched through dot operator like .find({"venue.city"="delhi"});

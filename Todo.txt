@@ -1,4 +1,4 @@
-SENDING JWT TOKEN TO COOKIE DIRECTLY
+
 DATA SANITIZATION && SECURITY
 BETTER ERROR HANDLING 
 USE OF VIRTUAL PROPERTIES
@@ -7,23 +7,31 @@ ERROR HANDLING:throwing custom error or next(err)
 
 
 
-USER WILL PAY TO REGISTER
 ORGANISER WILL PAY TO CREATE EVENT
 CHECK FOR CLASH OF EVENTS
-SEATS LEFT
 GET SINGLE EVENT
 
-Bugs🐛
-jwt malformed when logging out profile page
+BUG 🐛
+tab for different categories
+getting email after booking
+getting email for booking from stripe only❌
+event image not loaded in stripe checkout
+same image not loaded in password reset email
+brand image on stripe checkout
+maxGuestLimit in create event
+use webhooks to properly handle payment and booking
+proper alert message
+for about page add rich text editor or take content from chatgpt
 
-TODO
-PAYMENT INTEGRATION
-TAB FOR DIFFERENT CATEGORIES
-GETTING EMAIL FOR BOOKING
-HOME UPDATE WITH CORRECT DATA
 
 
 Done✅
+jwt malformed when logging out profile page
+home update with correct data
+temporary fix for booking only after payment
+heading in home page
+
+PAYMENT INTEGRATION
 WAY TO REGISTER TO AN EVENT 
 EDIT PROFILE
 UPDATE MY PASSWORD BUTTON

@@ -7,12 +7,9 @@ const eventRouter = express.Router();
 eventRouter
 .route('/events')
 // httpmethod(handler function)
-.get(TokenAuthentication,getAllEvents)//added tokenAuth middleware to protect the route
+.get(getAllEvents)//added tokenAuth middleware to protect the route
 .post(TokenAuthentication,handleUploadedEventPhoto,resizeUploadedEventPhoto,createEvent)//? insert mw = onlyAllowed("organiser","admin")
 
-eventRouter
-.route('/book/event/:eventId')
-.patch(TokenAuthentication,bookingTicket)
 
 eventRouter
 .route('/event/:eventId')

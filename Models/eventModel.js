@@ -81,7 +81,7 @@ const eventSchema = new mongoose.Schema(
 		},
 		maxGuestLimit: {
 			type: Number,
-			default: 100,
+			default: 25,
 		},
 		organiser: {
 			type: mongoose.Schema.ObjectId,

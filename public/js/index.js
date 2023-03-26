@@ -95,10 +95,8 @@ if(document.querySelector('.logout-btn')){
                 }
             });
         const response = await res.json();
-        if(response.status==='success'){
-            setTimeout(()=>{
-                location.reload(true);
-            },1000)
+        if(response.status==='success'){            
+            location.assign('/');
         }
     })
 }
@@ -372,35 +370,46 @@ if(document.querySelector('#create-event')){
     })
 }
 
-if(document.getElementById('event-book-btn')){
-    const eventId=location.href.substring(location.href.lastIndexOf('/') + 1);
-    document.getElementById('event-book-btn').addEventListener('click',async ()=>{
+
+
+
+
+/*********************************************************--STRIPE--INTEGRATION--*********************************************************/
+const stripe = window.Stripe('pk_test_51Mp8evSArVGJy6HVla9ZZQRUVHTbzkgfmBZJZem0E6gv8MjZ2KTiM82xPipCQeOVFjgwOf77MCo1XNWHw8VzeSDy00jmyHvrut')
+
+const gettingCheckoutSession=async(eventId)=>{
+    try {
+        const res = await fetch(`/api/v1/checkout-session/${eventId}`);
+        const response = await res.json();
+        console.log(response);
+
+        //using session charging the card
+        await stripe.redirectToCheckout({
+            sessionId:response.response.id
+        })
+        
+        
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+const bookBtn=document.getElementById('event-book-btn');
+if(bookBtn){
+    // const eventId=location.href.substring(location.href.lastIndexOf('/') + 1);
+    let eventId=bookBtn.getAttribute('data-event-id');
+
+    bookBtn.addEventListener('click',async ()=>{
         try {
-            const res = await fetch(`/api/v1/book/event/${eventId}`,{
-                method:'PATCH',
-                headers:{
-                    "Content-Type":"application/json"
-                },
-                body:JSON.stringify({
-                    data:'nothing'
-                })
-            })
-            const response = await res.json();
-            console.log(response);
-            if(response.status==='success'){
-                showAlert('success','Booked Successfully');
-                setTimeout(()=>{
-                    location.reload();
-                },1500)
-            }else{
-                showAlert('error',response.message);
-            }
+            bookBtn.textContent = 'Booking...';
+            
+            //PAYMENT
+            gettingCheckoutSession(eventId);
+
+            //BOOKED
         } catch (err) {
             console.error(err);
             showAlert('error',err.message);
         }
     })
 }
-
-
-

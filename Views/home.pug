@@ -4,8 +4,8 @@ block content
     main
         .banner
             .banner-content
-                h1 Welcome to EventEase
-                p Your one-stop event management solution
+                h1 EventEase
+                p Experience Hassle-free Events With Us
 
         .tab-container
             .tab.active Tab 1
@@ -18,7 +18,7 @@ block content
             .event-card
                 a(href=`/event/${event._id}`)
                     .card
-                        img(src='/image/business.jpg', alt='Image')   
+                        img(src=`/image/events/${event.photo}`, alt='Image')   
                         .card-body
                             h3.card-title=`${event.title[0].toUpperCase()+event.title.slice(1)}`
                             p.time-stamp=event.start.toLocaleString('en-us',{month:'long',day:'numeric',weekday:'short',year:'numeric'})

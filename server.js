@@ -16,6 +16,7 @@ mongoose
 const viewRouter = require('./Routes/viewRoute');
 const eventRouter = require('./Routes/eventRoute');
 const userRouter = require('./Routes/userRoute');
+const bookingRouter = require('./Routes/bookingRoute');
 
 //parses the data from body
 app.use(express.json());
@@ -33,6 +34,7 @@ app.use(express.static(path.join(__dirname,'public')))
 //whenver this route hits with req then corresponding router(middleware) runs
 app.use('/api/v1', eventRouter);
 app.use('/api/v1/users', userRouter);
+app.use('/api/v1',bookingRouter)
 app.use('/',viewRouter);
 
 

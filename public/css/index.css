@@ -12,6 +12,8 @@
     justify-content: space-between;
     align-items: center;
     padding: .5rem;
+    
+    height: 66px;
   }
   
   nav {
@@ -128,7 +130,9 @@
 
 .card img {
   width: 100%;
-  height: auto;
+  /* height: auto; */
+  height: 200px;
+  object-fit: cover;
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
 }
@@ -181,6 +185,7 @@ footer {
   border-radius: 10px;
   overflow: hidden;
   box-shadow: 0px 0px 10px rgba(0,0,0,0.2);
+  margin-top: 3.5vh;
 }
 
 .image-container img {
@@ -497,17 +502,6 @@ select {
 
 
 /************************************************************ CREATE EVENT ****************************************************************/
- /* form {
-  width: 500px;
-  margin: 0 auto;
-  font-family: Arial, sans-serif;
-} */
-/*
-label {
-  display: block;
-  margin-top: 10px;
-}
-*/
 
 input[type=text],
 input[type=number],
