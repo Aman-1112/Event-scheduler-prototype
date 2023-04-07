@@ -8,9 +8,12 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const mongoose = require('mongoose');
 //used mongoose(mongodb driver) to connect to our database(mongodb)
+
 mongoose
-.connect(process.env.LOCAL_DATABASE)
-.then(() => console.log('connected to local database'))
+// .connect(process.env.LOCAL_DATABASE)
+.connect(process.env.REMOTE_DATABASE)
+// .then(() => console.log('connected to local database'))
+.then(() => console.log('connected to remote database'))
 .catch((err) => console.error(err));
 
 const viewRouter = require('./Routes/viewRoute');
