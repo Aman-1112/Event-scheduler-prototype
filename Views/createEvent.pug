@@ -11,8 +11,11 @@ block content
         textarea#description(name='description', rows='10', cols='100', minlength='200', required='')
         label(for='entryfee') Entry Fee:
         input#entryfee(type='number', name='entryfee', min='0', step='10', max='5000', required='')
+        label(for='maxGuestLimit') Guest Limit:
+        input#guestlimit(type='number',name='maxGuestLimit',min=25,max=100)
         label(for='startdate') Start Timing:
         input#startdate(type='datetime-local', name='startdate', required='')
+        |
         label(for='enddate') End Timing:
         input#enddate(type='datetime-local', name='enddate', required='')
         .address-field

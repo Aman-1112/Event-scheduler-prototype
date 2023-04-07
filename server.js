@@ -55,6 +55,8 @@ app.use((cerr, req, res, next) => {
 	cerr.message = cerr.message||'Something went wrong';
 
 	if(req.originalUrl.startsWith('/api')){
+		console.log("for api");
+		console.log(cerr);
 		//for api
 		res.status(cerr.statusCode ).json({
 			status: 'fail',
@@ -62,6 +64,8 @@ app.use((cerr, req, res, next) => {
 			message:cerr.message
 		});
 	}else{
+		console.log("for rendering page");
+		console.log(cerr);
 		//for rendering page
 		res.status(cerr.statusCode).render('error',{
 			title:cerr.message

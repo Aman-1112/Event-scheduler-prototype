@@ -1,5 +1,5 @@
 const {home, eventDetail,getLoginForm, getSignupForm,getForgotPasswordForm,getResetPasswordForm,getProfile,getCreateEventForm} = require('../Controllers/viewController');
-const {isLoggedIn, TokenAuthentication} = require('../Controllers/authController');
+const {isLoggedIn, TokenAuthentication, onlyAllowed} = require('../Controllers/authController');
 const bookingController = require('../Controllers/bookingController');
 const express = require('express')
 const viewRouter = express.Router();
@@ -16,7 +16,7 @@ viewRouter.get('/signup',getSignupForm);
 viewRouter.get('/forgotPassword',getForgotPasswordForm);
 
 viewRouter.get('/profile',TokenAuthentication,getProfile);
-viewRouter.get('/createEvent',TokenAuthentication,getCreateEventForm);
+viewRouter.get('/createEvent',TokenAuthentication,onlyAllowed('organiser','admin'),getCreateEventForm);
 //?unsafe
 viewRouter.get('/resetPassword',getResetPasswordForm);
 

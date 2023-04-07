@@ -124,8 +124,10 @@ if(document.querySelector('.signup-form')){
 
 if(document.querySelector('#forgot-password-form')){
     document.querySelector('#forgot-password-form').addEventListener('submit',async(e)=>{
+        let resetButton = document.querySelector('#reset-link-btn');
         try {
             e.preventDefault();
+            resetButton.textContent='Sending...';
             const email = document.getElementById('reset-email').value;
             const res =await fetch('/api/v1/users/forgotPassword',{
                 method:'POST',
@@ -146,6 +148,7 @@ if(document.querySelector('#forgot-password-form')){
         } catch (err) {
             console.error(err);
         }
+        resetButton.textContent='Send Reset Link';
     })
 }
 //? check url
@@ -288,7 +291,10 @@ if(document.querySelector('#update-detail-form')){
         const formdata = new FormData();
         formdata.append("name",document.querySelector('#update-detail-form #name').value);
         formdata.append("email",document.querySelector('#update-detail-form #email').value);
-        formdata.append("photo",document.querySelector('#update-detail-form #update-photo').files[0]);
+
+        let photo = document.querySelector('#update-detail-form #update-photo').files[0];
+        if(photo)formdata.append("photo",photo);
+
         let male=document.querySelector('#update-detail-form #gender-male').checked;
         let gender;
         if(male)gender='male';
@@ -334,13 +340,15 @@ if(document.querySelector('#create-event')){
         formdata.append("title",document.querySelector('#create-event #title').value);
         formdata.append("photo",document.querySelector('#create-event #event-photo').files[0]);
         formdata.append("description",document.querySelector('#create-event #description').value);
-        formdata.append("entryfee",document.querySelector('#create-event #entryfee').value);
+        formdata.append("entryFee",document.querySelector('#create-event #entryfee').value);
         formdata.append("start",document.querySelector('#create-event #startdate').value);
         formdata.append("end",document.querySelector('#create-event #enddate').value);
         formdata.append("street",document.querySelector('#create-event #street').value);
         formdata.append("city",document.querySelector('#create-event #city').value);
         formdata.append("state",document.querySelector('#create-event #state').value);
-
+        if(document.querySelector('#create-event #guestlimit')){
+            formdata.append("maxGuestLimit",document.querySelector('#create-event #guestlimit').value);
+        }
         // let street=document.querySelector('#create-event #street').value;
         // let city=document.querySelector('#create-event #city').value;
         // let state=document.querySelector('#create-event #state').value
@@ -413,3 +421,24 @@ if(bookBtn){
         }
     })
 }
+
+/*****************************************tabs for different categories in home*******************************************/
+function getRequested(ele,url){
+    location.href='http://localhost:5000'+url;
+}
+//temporary solution
+(function setActiveTab(){
+    let url = window.location.href;
+    if(url.includes('?end[lt]')){
+        document.querySelector("[data-id=expired]").classList.add('active');
+    }
+    else if(url.includes('?entryFee=0')){
+        document.querySelector("[data-id=free]").classList.add('active');
+    }
+    else if(url.includes('?end[gt]')){
+        document.querySelector("[data-id=upcoming]").classList.add('active');
+    }
+    else{
+        document.querySelector("[data-id=all]").classList.add('active');
+    }
+})()

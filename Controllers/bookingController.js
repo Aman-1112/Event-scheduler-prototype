@@ -1,4 +1,5 @@
 const EventModel = require('../Models/eventModel');
+const Email = require('../utils/sendGrid');
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
@@ -23,7 +24,7 @@ exports.getCheckoutSession = async(req,res,next)=>{
                 product_data:{
                     name:event.title,
                     description:'Good Event',
-                    images:[`http://localhost:5000/image/events/${event.photo}`]
+                    images:[`${req.protocol}://${req.get('host')}/image/events/${event.photo}`]
                 },
                 currency:'inr'
             }
@@ -53,6 +54,8 @@ exports.createBooking=async(req,res,next)=>{
                 });
         res.redirect(`${req.protocol}://${req.get('host')}/`)
 
+        await new Email(req.user,'/','Thank You for booking an event with us.').sendBookingConfirmation();
+        console.log("booking confirmation email sent...")
 	} catch (e) {
 		console.error(e);
 		res.status(400).json({

@@ -8,7 +8,7 @@ eventRouter
 .route('/events')
 // httpmethod(handler function)
 .get(getAllEvents)//added tokenAuth middleware to protect the route
-.post(TokenAuthentication,handleUploadedEventPhoto,resizeUploadedEventPhoto,createEvent)//? insert mw = onlyAllowed("organiser","admin")
+.post(TokenAuthentication,onlyAllowed("organiser","admin"),handleUploadedEventPhoto,resizeUploadedEventPhoto,createEvent)//? insert mw = onlyAllowed("organiser","admin")
 
 
 eventRouter

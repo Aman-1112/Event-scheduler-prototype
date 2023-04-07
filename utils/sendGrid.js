@@ -29,12 +29,19 @@ module.exports = class Email {
         }
     }
     sendPasswordReset(){
+        //pug.renderFile converts pug template to html
         const html = pug.renderFile(path.join(__dirname,'../Views/resetEmailTemplate.pug'),{
             name:this.name,
             url:this.url,
             message:this.message
         })
         return this.sendEmail(html,'Reset Your Password')
+    }
+    sendBookingConfirmation(){
+        const html = pug.renderFile(path.join(__dirname,'../Views/bookingEmailTemplate.pug'),{
+            message:this.message
+        });
+        return this.sendEmail(html,'Booking Confirmation')
     }
 }
 

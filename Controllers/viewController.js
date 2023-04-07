@@ -1,8 +1,19 @@
 const eventModel = require('../Models/eventModel');
-const CustomError = require('../utils/errorHandler')
+const CustomError = require('../utils/errorHandler');
+const ApiFeatures = require('../utils/apifeatures');
 
 exports.home = async (req,res)=>{
-	const events = await eventModel.find();
+	// const events = await eventModel.find();
+	let apifeatures = new ApiFeatures(eventModel.find(), req.query)
+			.filter()
+			.pagination()
+			.sorting()
+			.projection();
+		// new ApiFeatures() return object
+		// onto which method can be applied
+		// method chaining is possible only because each method return this(i.e. current_object)
+
+		const events = await apifeatures.query;
 	res.status(200).render('home',{
 		title:'home',
 		events

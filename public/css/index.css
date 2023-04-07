@@ -152,13 +152,22 @@
 .card .location{
   font-style: italic;
 }
-.card .seats{
+.card .seats,.card .daysLeft{
   padding-top: 3px;
   text-align: end;
   color:maroon;
   margin-bottom: 0;
 }
-
+.card .expired{
+  color:grey;
+  cursor: not-allowed;
+  /* opacity: .4; */
+  text-align: end;
+}
+.card .live{
+  color:forestgreen;
+  text-align: end;
+}
 body{
   min-height: 100vh;
   display: flex;
@@ -398,6 +407,7 @@ select {
   text-align: center;
   border-radius: 5px;
   margin: 10px 0;
+  z-index: 200;
 }
 .success-alert {
   position: fixed;
@@ -410,6 +420,7 @@ select {
   text-align: center;
   border-radius: 5px;
   margin: 10px 0;
+  z-index: 200;
 }
 
 /************Error Page*************************/

@@ -55,9 +55,15 @@ exports.Signup = async (req, res) => {
 		// });
 	} catch (e) {
 		console.log(e);
+		let message;
+		if(e.code===11000){
+			message=`This ${Object.keys(e.keyValue)[0]} already exists`;
+		}else{
+			message=e.message;
+		}
 		res.status(400).json({
 			status: 'fail',
-			error: e.message
+			error: message
 		});
 	}
 };
@@ -184,7 +190,7 @@ exports.isLoggedIn = async (req, res, next) => {
 				) {
 					return next();
 				}
-
+			req.user = user;
 			res.locals.user = user;
 			next();
 		}else{
@@ -201,7 +207,10 @@ exports.onlyAllowed = (...roles) => {
 	// returns middleware
 	return function (req, res, next) {
 		if (!roles.includes(req.user.role)) {
-			return next(new Error('You do not have permission to access this route'));
+			let x="";
+			roles.forEach(r=>x=x+r+' or ');
+			console.log(x.slice(0,-2));
+			return next(new Error('You do not have permission to access this route..you have to be '+x.slice(0,-3)));
 		}
 		next();
 	};

@@ -6,26 +6,41 @@ USE OF VIRTUAL PROPERTIES
 ERROR HANDLING:throwing custom error or next(err)
 
 
-
+FEATURE 🧐
 ORGANISER WILL PAY TO CREATE EVENT
 CHECK FOR CLASH OF EVENTS
 GET SINGLE EVENT
+SEPERATE FEATURE FOR ORGANISER AND ADMIN LIKE UPDATE AND DELETE EVENT
 
 BUG 🐛
-tab for different categories
-getting email after booking
-getting email for booking from stripe only❌
-event image not loaded in stripe checkout
-same image not loaded in password reset email
-brand image on stripe checkout
-maxGuestLimit in create event
-use webhooks to properly handle payment and booking
+define authority
+data validation
 proper alert message
-for about page add rich text editor or take content from chatgpt
 
+can make library for error code and corresponding message
+can add filters as dropdown
+for about page add rich text editor or take content from chatgpt
+getting email after booking(proper templ)
+tab for different categories(proper)
+getting email for booking from stripe only❌
+brand image on stripe checkout❌
+
+PRODUCTION 🚚
+event image not loaded in stripe checkout
+use webhooks to properly handle payment and booking
+
+same image not loaded in password reset email:
+Google adds its own URL before an image URL when the email is being displayed through the Gmail web interface.
+This is done as a security measure to protect users from potentially harmful images or content that may be included in emails.
+When an email includes an image that is hosted on an external server, Google's proxy server will fetch the image and scan it for any potential security threats before displaying it to the user.
+This helps to prevent any malicious code or viruses from being executed on the user's device when they open the email.
+While this can sometimes cause issues with image rendering, it is an important security measure that helps to protect Gmail users from potential threats.
 
 
 Done✅
+maxGuestLimit in create event
+getting days left as 0
+issue with entry fee always 0
 jwt malformed when logging out profile page
 home update with correct data
 temporary fix for booking only after payment

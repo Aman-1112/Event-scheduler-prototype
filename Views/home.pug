@@ -8,12 +8,12 @@ block content
                 p Experience Hassle-free Events With Us
 
         .tab-container
-            .tab.active Tab 1
-            .tab Tab 2
-            .tab Tab 3
-            .tab Tab 4
-            .tab Tab 5
-            .tab Tab 6
+            .tab(data-id="all",onclick="getRequested(this,'/')") All
+            .tab(data-id="upcoming",onclick="getRequested(this,'?end[gt]='+new Date())") Upcoming
+            .tab(data-id="free",onclick="getRequested(this,'?entryFee=0')") Free
+            .tab(data-id="expired",onclick="getRequested(this,'?end[lt]='+new Date())") Expired
+            //- .tab(onclick="getRequested()") Tab 5
+            //- .tab(onclick="getRequested()") Tab 6
         each event in events
             .event-card
                 a(href=`/event/${event._id}`)
@@ -24,3 +24,9 @@ block content
                             p.time-stamp=event.start.toLocaleString('en-us',{month:'long',day:'numeric',weekday:'short',year:'numeric'})
                             p.location=`${event.venue.street},${event.venue.city},${event.venue.state}`
                             p.seats #{event.maxGuestLimit-event.usersRegistered.length} seats remaining
+                            if(event.daysLeft>1)
+                                p.daysLeft= `${Math.floor(event.daysLeft)} days to go`
+                            else if(event.daysLeft<0)
+                                p.expired Expired
+                            else 
+                                p.live Live

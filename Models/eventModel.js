@@ -102,7 +102,7 @@ const eventSchema = new mongoose.Schema(
 // toJson & toObject set virtual property to be true while sending Json or Object
 
 // virtual property
-eventSchema.virtual('days-left').get(function(){
+eventSchema.virtual('daysLeft').get(function(){
 	//.get means it will set virtual prop. for every get request
 	const date1=new Date(this.start);
 	const date2=new Date();
