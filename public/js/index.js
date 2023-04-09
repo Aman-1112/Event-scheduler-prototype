@@ -424,7 +424,7 @@ if(bookBtn){
 
 /*****************************************tabs for different categories in home*******************************************/
 function getRequested(ele,url){
-    location.href='http://localhost:5000'+url;
+    location.href=window.location.origin+url;
 }
 //temporary solution
 (function setActiveTab(){

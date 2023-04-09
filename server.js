@@ -42,9 +42,9 @@ app.use('/',viewRouter);
 
 
 //.all accepts all type of HTTP requests
-// app.all('*', (req, res, next) => {
-// 	next(new CustomError("This route does not exist on the server",404))
-// });
+app.all('*', (req, res, next) => {
+	next(new CustomError("This route does not exist on the server",404))
+});
 
 const CustomError=require('./utils/errorHandler');
 //middleware with four parameter express automatically identify as
