@@ -16,6 +16,7 @@ BUG 🐛
 define authority
 data validation
 proper alert message
+disable book if event has expired
 
 can make library for error code and corresponding message
 can add filters as dropdown
@@ -26,7 +27,7 @@ getting email for booking from stripe only❌
 brand image on stripe checkout❌
 
 PRODUCTION 🚚
-event image not loaded in stripe checkout
+event photo not of proper size in checkout page
 use webhooks to properly handle payment and booking
 
 same image not loaded in password reset email:

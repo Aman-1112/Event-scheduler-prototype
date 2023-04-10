@@ -424,6 +424,9 @@ if(bookBtn){
 
 /*****************************************tabs for different categories in home*******************************************/
 function getRequested(ele,url){
+    console.log("From getRequested",window.location.origin);
+    console.log(window.location.origin+url);
+
     location.href=window.location.origin+url;
 }
 //temporary solution
