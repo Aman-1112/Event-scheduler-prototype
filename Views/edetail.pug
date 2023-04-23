@@ -33,7 +33,7 @@ block content
               p= event.organiser.name
               p= event.organiser.email
           - let diff = (new Date()).getTime() - (new Date(event.createdAt)).getTime(); 
-          if(event.organiser.id===user.id && diff < 24*60*60*1000)
+          if(user && event.organiser.id===user.id && diff < 24*60*60*1000)
             .organiser-action
               a(href=`/updateEvent/${event.id}`)
                 button.primary Update Event 
