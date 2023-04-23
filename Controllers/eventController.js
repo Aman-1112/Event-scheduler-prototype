@@ -53,7 +53,8 @@ exports.getAllEvents = async (req, res) => {
 			.filter()
 			.pagination()
 			.sorting()
-			.projection();
+			.projection()
+			.city();
 		// new ApiFeatures() return object
 		// onto which method can be applied
 		// method chaining is possible only because each method return this(i.e. current_object)
@@ -116,9 +117,12 @@ exports.getEvent = async (req, res) => {
 };
 
 exports.updateEvent = async (req, res) => {
+	const id = req.params.eventId;
+	console.log('req.body', req.body);
 	try {
-		console.log('req.body', req.body);
-		const id = req.params.eventId;
+		req.body.venue={street:req.body.street,city:req.body.city,state:req.body.state};
+		if(req.body.photo)
+			req.body.photo=req.file.filename;
 		const event = await eventModel.findByIdAndUpdate(id, req.body, {
 			runValidators: true,
 			new: true
@@ -131,6 +135,7 @@ exports.updateEvent = async (req, res) => {
 			body: event
 		});
 	} catch (e) {
+		console.log("Below is the error message from update details")
 		console.error(e);
 		res.status(400).json({
 			status: 'fail',
@@ -143,10 +148,8 @@ exports.deleteEvent = async (req, res) => {
 	try {
 		const id = req.params.eventId;
 		const event = await eventModel.findByIdAndDelete(id);
-		res.status(204).json({
-			status: 'success',
-			body: event
-		});
+		res.status(204).json(
+		);
 
 		if (event == null) throw new Error(`event of id: ${id} doesn't exist`);
 	} catch (e) {

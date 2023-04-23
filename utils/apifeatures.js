@@ -57,6 +57,14 @@ class ApiFeatures {
 		}
 		return this;
 	}
+	// :x
+	//temporary fix
+	city(){
+		// console.log("this.queryParams",this.queryParams)
+		if(this.queryParams['venue.city'])
+			this.query = this.query.find({'venue.city':this.queryParams['venue.city']});
+		return this;
+	}
 }
 
 module.exports = ApiFeatures;

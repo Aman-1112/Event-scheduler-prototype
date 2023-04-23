@@ -14,6 +14,13 @@ block content
             .tab(data-id="expired",onclick="getRequested(this,'?end[lt]='+new Date())") Expired
             //- .tab(onclick="getRequested()") Tab 5
             //- .tab(onclick="getRequested()") Tab 6
+        select#list-of-city(onchange='getCity()')
+            option(selected=true,value='',disabled=true,hidden=true) Select City
+            option(value='Bengaluru') Bengaluru
+            option(value='Delhi') Delhi
+            option(value='Mumbai') Mumbai
+            option(value='Chennai') Chennai
+            
         each event in events
             .event-card
                 a(href=`/event/${event._id}`)

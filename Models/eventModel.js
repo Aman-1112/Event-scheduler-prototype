@@ -43,14 +43,14 @@ const eventSchema = new mongoose.Schema(
 		start: {
 			type: Date,
 			validate: {
-				validator: function () {
-					//? how to compare dates in mongoose
-					//? could not get this in case of findbyIdandUpdate
-					console.log(this._update);
-					console.log('this=', this);
+				validator: function (value) {
 					console.log('this.start' + this.start);
-					console.log('date.now' + Date.now());
-					return this.start > Date.now();
+					console.log("ye hai value = ",value);
+					//? Not Sure Why but below is fact I conclude to by hit and trail
+					//! for creating document this.start is getting accessed 
+					//! But for updating document this.start = undefined so we use value
+					return value > new Date();
+					// return this.start > Date.now();
 				},
 				message: 'an event cannot start in the past',
 			},
@@ -61,14 +61,20 @@ const eventSchema = new mongoose.Schema(
 			//for multiple validator pass array of objs containing validator and message
 			validate: [
 				{
-					validator: function () {
-						return this.end > Date.now();
+					validator: function (value) {
+						return value > new Date();
 					},
 					message: 'an event cannot end in the past',
 				},
 				{
 					validator: function () {
-						return this.start < this.end;
+						//? Why can't we access during findByIdAndUpdate
+						if(this.start && this.end){
+							return this.start < this.end;
+						}
+						else{
+							return true;
+						}
 					},
 					message: 'an event cannot end before it starts',
 				},

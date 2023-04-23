@@ -6,7 +6,9 @@ block content
     .event-details
       .heading
         h1=`${event.title[0].toUpperCase()+event.title.slice(1)}`
-        if(!user)
+        if((new Date(event.end).getTime()) < Date.now())
+            button Expired
+        else if(!user)
           a(href='/login')
             button Book Now
         else if(event.usersRegistered.includes(user._id))
@@ -30,6 +32,12 @@ block content
             div
               p= event.organiser.name
               p= event.organiser.email
+          - let diff = (new Date()).getTime() - (new Date(event.createdAt)).getTime(); 
+          if(event.organiser.id===user.id && diff < 24*60*60*1000)
+            .organiser-action
+              a(href=`/updateEvent/${event.id}`)
+                button.primary Update Event 
+              button.red(event-id=event.id,onclick=`deleteEventByOrganiser(this)`) Delete Event
         .about
           h4 About
           p= event.description

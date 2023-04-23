@@ -220,7 +220,7 @@ exports.forgotPassword = async (req, res) => {
 	try {
 		const user = await userModel.findOne({ email: req.body.email });
 		// checking for the valid email and getting user
-		if (!user) throw new Error('Invalid Email');
+		if (!user) throw new Error('User with this email doesn\'t exist');
 
 		// generate resetToken
 		const resetToken = await user.generateResetToken();

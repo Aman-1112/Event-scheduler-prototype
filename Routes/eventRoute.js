@@ -14,9 +14,9 @@ eventRouter
 eventRouter
 .route('/event/:eventId')
 .get(getEvent)
-.patch(updateEvent)
-.delete(TokenAuthentication,onlyAllowed("admin"),deleteEvent)
-
+.patch(TokenAuthentication,handleUploadedEventPhoto,resizeUploadedEventPhoto,updateEvent)
+.delete(TokenAuthentication,onlyAllowed("organiser","admin"),deleteEvent)
+//? pls add above check if organiser of other event doesn't delete this one
 eventRouter
 .route(onlyAllowed("admin"),'/events/stats')
 .get(getEventStats)

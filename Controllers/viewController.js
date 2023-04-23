@@ -8,7 +8,8 @@ exports.home = async (req,res)=>{
 			.filter()
 			.pagination()
 			.sorting()
-			.projection();
+			.projection()
+			.city();
 		// new ApiFeatures() return object
 		// onto which method can be applied
 		// method chaining is possible only because each method return this(i.e. current_object)
@@ -71,5 +72,17 @@ exports.getProfile = (req,res)=>{
 exports.getCreateEventForm =(req,res)=>{
 	res.status(200).render('createEvent',{
 		title:'create event'
+	})
+}
+
+exports.getUpdateEventForm = async (req,res)=>{
+	//fetch event details using eventId
+	let eventId = req.params.eventId;
+	const event = await eventModel.findById(eventId);
+
+	//populate createEvent page with it
+	res.status(200).render('createEvent',{
+		title:'update event',
+		event
 	})
 }

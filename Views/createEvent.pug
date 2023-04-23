@@ -1,28 +1,35 @@
 extends base
+//-For Creating and Updating Event
 block content
-    h1 Create Event
+    h1 #{event?'Update':'Create'} Event
     .container
-      form#create-event
+      form(id=`${event?'update-event':'create-event'}`)
         label(for='title') Event Title:
-        input#title(type='text', name='title', minlength='10', required='')
+        input#title(type='text', name='title', minlength='10', required='',value=`${event?event.title:''}`)
         label(for='event-photo') Choose a photo:
-        input#event-photo(type='file',required='')
+        if(event)
+          input#event-photo(type='file')
+        else
+          input#event-photo(type='file',required='')
         label(for='description') Event Description:
-        textarea#description(name='description', rows='10', cols='100', minlength='200', required='')
+        textarea#description(name='description', rows='10', cols='100', minlength='200', required='') #{event?event.description:''}
         label(for='entryfee') Entry Fee:
-        input#entryfee(type='number', name='entryfee', min='0', step='10', max='5000', required='')
+        input#entryfee(type='number', name='entryfee', min='0', step='10', max='5000', required='',value=`${event?event.entryFee:''}`)
         label(for='maxGuestLimit') Guest Limit:
-        input#guestlimit(type='number',name='maxGuestLimit',min=25,max=100)
+        input#guestlimit(type='number',name='maxGuestLimit',min=25,max=100,value=`${event?event.maxGuestLimit:''}`)
         label(for='startdate') Start Timing:
-        input#startdate(type='datetime-local', name='startdate', required='')
+        input#startdate(type='datetime-local', name='startdate', required='',value=`${event?event.start.toISOString().slice(0,16):''}`)
         |
         label(for='enddate') End Timing:
-        input#enddate(type='datetime-local', name='enddate', required='')
+        input#enddate(type='datetime-local', name='enddate', required='',value=`${event?event.end.toISOString().slice(0,16):''}`)
         .address-field
           label(for='street') Street Address:
-          input#street(type='text', name='street', required='')
+          input#street(type='text', name='street', required='',value=`${event?event.venue.street:''}`)
           label(for='city') City:
-          input#city(type='text', name='city', required='')
+          input#city(type='text', name='city', required='',value=`${event?event.venue.city:''}`)
           label(for='state') State:
-          input#state(type='text', name='state', required='')
-        button#create-event-btn(type='submit') create event
+          input#state(type='text', name='state', required='',value=`${event?event.venue.state:''}`)
+        if(event)
+          button#update-event-btn(type='submit') Update Event
+        else
+          button#create-event-btn(type='submit') Create Event

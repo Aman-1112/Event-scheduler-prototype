@@ -10,14 +10,14 @@ FEATURE 🧐
 ORGANISER WILL PAY TO CREATE EVENT
 CHECK FOR CLASH OF EVENTS
 GET SINGLE EVENT
-SEPERATE FEATURE FOR ORGANISER AND ADMIN LIKE UPDATE AND DELETE EVENT
+pagination
+
 
 BUG 🐛
-define authority
-data validation
-proper alert message
-disable book if event has expired
+IN REST API ORGANISER OF ANY EVENT CAN STILL DELETE ANY OTHER'S EVENT
+AS WE CAN'T ACCESS THIS IN findByIdAndUpdate SO AT UPDATION NOT ABLE TO VALIDATE IF END<START
 
+ENHANCEMENT 🤖
 can make library for error code and corresponding message
 can add filters as dropdown
 for about page add rich text editor or take content from chatgpt
@@ -30,6 +30,19 @@ PRODUCTION 🚚
 event photo not of proper size in checkout page
 use webhooks to properly handle payment and booking
 
+
+
+Done✅
+scroll position restore
+alert if normal user tried to access create event
+UI for tabs
+alert if invalid email in forgot email or doesn't exist
+define authority
+data validation
+proper alert message
+disable book if event has expired
+
+SEPERATE FEATURE FOR ORGANISER AND ADMIN LIKE UPDATE AND DELETE EVENT
 same image not loaded in password reset email:
 Google adds its own URL before an image URL when the email is being displayed through the Gmail web interface.
 This is done as a security measure to protect users from potentially harmful images or content that may be included in emails.
@@ -37,8 +50,6 @@ When an email includes an image that is hosted on an external server, Google's p
 This helps to prevent any malicious code or viruses from being executed on the user's device when they open the email.
 While this can sometimes cause issues with image rendering, it is an important security measure that helps to protect Gmail users from potential threats.
 
-
-Done✅
 maxGuestLimit in create event
 getting days left as 0
 issue with entry fee always 0

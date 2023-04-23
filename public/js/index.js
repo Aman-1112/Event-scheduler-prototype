@@ -5,6 +5,77 @@
 //? neither import nor require is working 
 //? why does it need a bundler to work properly
 
+/***************** Delete By Organiser******************/
+
+
+const deleteEventByOrganiser = async (ele)=>{
+    let eventId = ele.getAttribute('event-id')
+    try {
+        const response = await fetch(`/api/v1/event/${eventId}`,{
+            method:'DELETE'
+        })
+        console.log("delete response=",response)
+        if(response.status===204){
+            showAlert('success','Event Deleted Successfully');
+            setTimeout(()=>{
+                location.assign('/')
+            },1000)
+        }else{
+            showAlert('error',response.error);
+        }
+    } catch (err) {
+        console.log(err);
+        showAlert('error',err.message)
+    }
+}
+/****************************************************************/
+
+
+function getCity(){
+    console.log("get city was called");
+    let selectedCity = document.querySelector('#list-of-city').value;
+    location.href = `${location.origin}?venue.city=${selectedCity}`;  
+}
+/*********************from Outsource***************************/
+// window.onscroll = function() {
+//     console.log("FROM Saving SCROLL POSITION",window.pageYOffset);
+//     sessionStorage.setItem('scrollPos', window.pageYOffset);
+// };
+
+// window.onload = function() {
+//     console.log("FROM SETTING SCROLL POSITION",window.pageYOffset);
+//     var scrollPos = sessionStorage.getItem('scrollPos');
+//     if (scrollPos) {
+//         smoothScrollToY(scrollPos,1000)
+//     //   window.scrollTo(0, scrollPos);
+//       sessionStorage.removeItem('scrollPos');
+//     }
+// };
+
+// function smoothScrollToY(targetY, duration) {
+//     const startY = window.pageYOffset;
+//     const distanceY = targetY - startY;
+//     let startTime = null;
+  
+//     function step(timestamp) {
+//       if (!startTime) startTime = timestamp;
+//       const progress = timestamp - startTime;
+//       const ease = easeInOutQuart(progress, 0, 1, duration);
+//       window.scrollTo(0, startY + distanceY * ease);
+//       if (progress < duration) window.requestAnimationFrame(step);
+//     }
+  
+//     window.requestAnimationFrame(step);
+// }
+  
+// function easeInOutQuart(t, b, c, d) {
+// t /= d / 2;
+// if (t < 1) return c / 2 * t * t * t * t + b;
+// t -= 2;
+// return -c / 2 * (t * t * t * t - 2) + b;
+// }
+/**********************************************************************/ 
+
 const hideAlert = ()=>{
     const el = document.querySelector('.alert');
     if(el){
@@ -39,7 +110,7 @@ const loginRequest = async(email,password)=>{
             showAlert('success','logged in successfully');
             setTimeout(()=>{
                 location.assign('/')
-            },1500)
+            },1000)
         }
         else if(response.status==='fail'){
             showAlert('error',response.error);
@@ -65,7 +136,7 @@ const SignupRequest =async (data)=>{
             showAlert('success','Signed in successfully');
             setTimeout(()=>{
                 location.assign('/')
-            },1500)
+            },1000)
         }
         else if(response.status==='fail'){
             showAlert('error',response.error);
@@ -144,9 +215,12 @@ if(document.querySelector('#forgot-password-form')){
                 let resetBtn=document.querySelector('#reset-link-btn');
                 resetBtn.parentElement.insertAdjacentHTML('afterbegin','<p class=\'reset-link-msg\'>'+response.message+' !!!</p>');
                 document.getElementById('reset-email').value='';
+            }else{
+                showAlert('error',response.error);
             }
         } catch (err) {
             console.error(err);
+            showAlert('error',err.error);
         }
         resetButton.textContent='Send Reset Link';
     })
@@ -174,7 +248,7 @@ if(document.getElementById('reset-form')){
                 showAlert('success','Password Reset Successfully');
                 setTimeout(()=>{
                     location.assign('/');
-                },2000)
+                },1000)
             }else{
                 showAlert('error',response.message);
             }
@@ -186,7 +260,7 @@ if(document.getElementById('reset-form')){
 }
 
 
-///////////////////////////////////////////////////working?????????????????????????????????????????????//
+/***************************************profile page*********************************/
 function tab_selector(ele,className){
     console.log(ele);
     //or can search by classname and remove it
@@ -228,21 +302,6 @@ if(document.querySelector('#del-acc-form'))
                             console.log(response.message);
                             showAlert('error',response.message)
                         }
-                        // console.log("res",res)
-                        // const response = await res.json();
-                        // console.log(response);
-                        // if(response.status==='success'){
-                        //     showAlert('success','Account Deleted Successfully');
-                        //     // setTimeout(()=>{
-                        //     //     location.assign('/');
-                        //     // },1000)
-                        // }else{
-                        //     showAlert('error',response.message);
-                        // }
-                    // } catch (err) {
-                    //     console.error(err);
-                    //     showAlert('error',response.message);
-                    // }
 })
 
 if(document.querySelector('#update-pass-form'))
@@ -272,7 +331,7 @@ if(document.querySelector('#update-pass-form'))
                 showAlert('success','Password Updated Successfully');
                 setTimeout(()=>{
                     location.assign('/profile');
-                },2000)
+                },1000)
             }else{
                 showAlert('error',response.message);
             }
@@ -305,14 +364,6 @@ if(document.querySelector('#update-detail-form')){
             const res = await fetch('/api/v1/users/updateMyDetails',{
                 method:'PATCH',
                 body:formdata
-                // headers:{
-                //     "Content-Type":"application/json"
-                // },
-                // body:JSON.stringify({
-                //     name,
-                //     email,
-                //     gender
-                // })
             })
             const response = await res.json();
             console.log("response",response);
@@ -331,7 +382,7 @@ if(document.querySelector('#update-detail-form')){
     })
 }
 
-/**********************************************Create Event Form********************************************/
+/**********************************************Create/Update Event Form********************************************/
 if(document.querySelector('#create-event')){
     document.querySelector('#create-event').addEventListener('submit',async(e)=>{
         e.preventDefault();
@@ -358,7 +409,7 @@ if(document.querySelector('#create-event')){
 
         try {
             const res = await fetch('/api/v1/events',{
-                method:'post',
+                method:'POST',
                 body:formdata
             })
             const response = await res.json();
@@ -367,9 +418,9 @@ if(document.querySelector('#create-event')){
                 showAlert('success','Event Created Successfully');
                 setTimeout(()=>{
                     location.assign('/');
-                },1500)
+                },1000)
             }else{
-                showAlert('error',response.message);
+                showAlert('error',response.error);
             }
         } catch (err) {
             console.error(err);
@@ -378,6 +429,48 @@ if(document.querySelector('#create-event')){
     })
 }
 
+if(document.querySelector('#update-event')){
+    document.querySelector('#update-event').addEventListener('submit',async(e)=>{
+        e.preventDefault();
+
+        const formdata = new FormData();
+
+        formdata.append("title",document.querySelector('#update-event #title').value);
+        if(document.querySelector('#update-event #event-photo').files[0])
+            formdata.append("photo",document.querySelector('#update-event #event-photo').files[0]);
+        formdata.append("description",document.querySelector('#update-event #description').value);
+        formdata.append("entryFee",document.querySelector('#update-event #entryfee').value);
+        formdata.append("start",document.querySelector('#update-event #startdate').value);
+        formdata.append("end",document.querySelector('#update-event #enddate').value);
+        formdata.append("street",document.querySelector('#update-event #street').value);
+        formdata.append("city",document.querySelector('#update-event #city').value);
+        formdata.append("state",document.querySelector('#update-event #state').value);
+        if(document.querySelector('#update-event #guestlimit')){
+            formdata.append("maxGuestLimit",document.querySelector('#update-event #guestlimit').value);
+        }
+
+        const eventId = location.pathname.split('/')[2];
+        try {
+            const res = await fetch(`/api/v1/event/${eventId}`,{
+                method:'PATCH',
+                body:formdata
+            })
+            const response = await res.json();
+            console.log("response from update event ",response);
+            if(response.status==='success'){
+                showAlert('success','Event Updated Successfully');
+                setTimeout(()=>{
+                    location.assign('/');
+                },1000)
+            }else{
+                showAlert('error',response.error);
+            }
+        } catch (err) {
+            console.error(err);
+            showAlert('error',err.message);
+        }
+    })
+}
 
 
 
