@@ -2,14 +2,17 @@ extends base
 
 block content
     .container
-        h1 Login Page
+        h1 Login page
         form.login-form
             .form-group
                 label(for='email') Email:
                 input#login-email(type='email', name='email', required='')
             .form-group
                 label(for='password') Password:
-                input#login-password(type='password', name='password', required='')
+                div.password-input
+                    input#login-password.input-password(type='password', name='password', required='')
+                    button.toggle-password(type='button',data-target="login-password")
+                        i.fa-solid.fa-eye-slash
             button(type='submit') Login
             .form-group
                 a(href='/forgotPassword') Forgot password?

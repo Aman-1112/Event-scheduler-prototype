@@ -31,18 +31,35 @@ const userSchema = new mongoose.Schema({
 	password: {
 		type: String,
 		required: [true, 'please provide a password'],
-		minlength: 6,
+		validate: {
+			validator: function (value) {
+			  // Password criteria validation
+			  const minLength = 8;
+			  const hasUppercase = /[A-Z]/.test(value);
+			  const hasLowercase = /[a-z]/.test(value);
+			  const hasNumber = /\d/.test(value);
+			  const hasSpecialChar = /[!@#$%^&*]/.test(value);
+	  
+			  return (
+				value.length >= minLength &&
+				hasUppercase &&
+				hasLowercase &&
+				hasNumber &&
+				hasSpecialChar
+			  );
+			},
+			message: 'Password does not meet the criteria',
+		  },
 		select: false
 	},
 	confirmPassword: {
 		type: String,
 		required: [true, 'please confirm your password'],
-		minlength: 6,
 		validate: {
 			validator: function (cp) {
 				return cp === this.password;
 			},
-			message: 'your confirm password was wrong'
+			message: 'The password and confirm password do not match'
 		}
 	},
 	gender: {

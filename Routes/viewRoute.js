@@ -20,7 +20,7 @@ viewRouter.get('/createEvent',TokenAuthentication,onlyAllowed('organiser','admin
 viewRouter.get('/updateEvent/:eventId',TokenAuthentication,onlyAllowed('organiser','admin'),getUpdateEventForm);
 
 //?unsafe
-viewRouter.get('/resetPassword',getResetPasswordForm);
+viewRouter.get('/resetPassword/:resetToken',getResetPasswordForm);
 
 
 module.exports = viewRouter;

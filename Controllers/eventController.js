@@ -88,10 +88,10 @@ exports.createEvent = async (req, res) => {
 			body: event
 		});
 	} catch (e) {
-		console.error(e);
+		console.error("😫=",e.message.split(':')[2]);
 		res.status(400).json({
 			status: 'fail',
-			error: e.message
+			error: e.message.split(':')[2]
 		});
 	}
 };

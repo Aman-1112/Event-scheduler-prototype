@@ -1,35 +1,40 @@
 extends base
 //-For Creating and Updating Event
 block content
-    h1 #{event?'Update':'Create'} Event
+    h1.createEvent #{event?'Update':'Create'} event
     .container
       form(id=`${event?'update-event':'create-event'}`)
-        label(for='title') Event Title:
+        label(for='title') Event title
         input#title(type='text', name='title', minlength='10', required='',value=`${event?event.title:''}`)
-        label(for='event-photo') Choose a photo:
+        label(for='event-photo') Choose a photo
         if(event)
           input#event-photo(type='file')
         else
           input#event-photo(type='file',required='')
-        label(for='description') Event Description:
+        label(for='description') Event description
         textarea#description(name='description', rows='10', cols='100', minlength='200', required='') #{event?event.description:''}
-        label(for='entryfee') Entry Fee:
+        label(for='entryfee') Entry fee
         input#entryfee(type='number', name='entryfee', min='0', step='10', max='5000', required='',value=`${event?event.entryFee:''}`)
-        label(for='maxGuestLimit') Guest Limit:
+        label(for='maxGuestLimit') Guest limit
         input#guestlimit(type='number',name='maxGuestLimit',min=25,max=100,value=`${event?event.maxGuestLimit:''}`)
-        label(for='startdate') Start Timing:
-        input#startdate(type='datetime-local', name='startdate', required='',value=`${event?event.start.toISOString().slice(0,16):''}`)
+        label(for='startdate') Start timing
+        - const options = { year: 'numeric', month: '2-digit', day: '2-digit',hour:'2-digit',minute:'2-digit',timeZoneName:'short' };
+        - const eveStart = event && new Date(event.start)
+        - const eveEnd = event && new Date(event.end)
+        //- input#startdate(type='datetime-local', name='startdate', required='',value=`${event?event.start.toISOString().slice(0,16):''}`)
+        input#startdate(type='datetime-local', name='startdate', required='',value=`${event?`${eveStart.getFullYear()}-${String(eveStart.getMonth() + 1).padStart(2, '0')}-${String(eveStart.getDate()).padStart(2, '0')}T${String(eveStart.getHours()).padStart(2, '0')}:${String(eveStart.getMinutes()).padStart(2, '0')}`:''}`)
         |
-        label(for='enddate') End Timing:
-        input#enddate(type='datetime-local', name='enddate', required='',value=`${event?event.end.toISOString().slice(0,16):''}`)
+        label(for='enddate') End timing
+        //- input#enddate(type='datetime-local', name='enddate', required='',value=`${event?event.end.toISOString().slice(0,16):''}`)
+        input#enddate(type='datetime-local', name='enddate', required='',value=`${event?`${eveEnd.getFullYear()}-${String(eveEnd.getMonth() + 1).padStart(2, '0')}-${String(eveEnd.getDate()).padStart(2, '0')}T${String(eveEnd.getHours()).padStart(2, '0')}:${String(eveEnd.getMinutes()).padStart(2, '0')}`:''}`)
         .address-field
-          label(for='street') Street Address:
+          label(for='street') Street address
           input#street(type='text', name='street', required='',value=`${event?event.venue.street:''}`)
-          label(for='city') City:
+          label(for='city') City
           input#city(type='text', name='city', required='',value=`${event?event.venue.city:''}`)
-          label(for='state') State:
+          label(for='state') State
           input#state(type='text', name='state', required='',value=`${event?event.venue.state:''}`)
         if(event)
-          button#update-event-btn(type='submit') Update Event
+          button#update-event-btn(type='submit') Update event
         else
-          button#create-event-btn(type='submit') Create Event
+          button#create-event-btn(type='submit') Create event

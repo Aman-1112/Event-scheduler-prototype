@@ -16,10 +16,10 @@ block content
             //- .tab(onclick="getRequested()") Tab 6
         select#list-of-city(onchange='getCity()')
             option(selected=true,value='',disabled=true,hidden=true) Select City
-            option(value='Bengaluru') Bengaluru
-            option(value='Delhi') Delhi
-            option(value='Mumbai') Mumbai
-            option(value='Chennai') Chennai
+            option#city-option(value='Bengaluru') Bengaluru
+            option#city-option(value='Delhi') Delhi
+            option#city-option(value='Mumbai') Mumbai
+            option#city-option(value='Chennai') Chennai
             
         each event in events
             .event-card

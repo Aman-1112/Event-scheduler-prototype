@@ -26,7 +26,7 @@ exports.eventDetail = async (req,res,next)=>{
 	try{
 		const eventId=req.params.id;
 		const event = await eventModel.findById(eventId).populate({path:'organiser',select:"name email photo"});
-		// console.log(event)
+		// console.log("event =================",event.start)
 		res.status(200).render('edetail',{
 			title:'event',
 			event
@@ -79,7 +79,7 @@ exports.getUpdateEventForm = async (req,res)=>{
 	//fetch event details using eventId
 	let eventId = req.params.eventId;
 	const event = await eventModel.findById(eventId);
-
+	console.log("event ka start =",event.start)
 	//populate createEvent page with it
 	res.status(200).render('createEvent',{
 		title:'update event',

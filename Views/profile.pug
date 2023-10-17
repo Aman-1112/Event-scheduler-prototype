@@ -1,5 +1,6 @@
 extends base
 block content
+    include modal.pug
     .profile-container
         img(src=`/image/users/${user.photo}`, alt='Profile Picture')
         h1=user.name
@@ -15,48 +16,69 @@ block content
                 | Event #{user.role}
         hr
         .tab-container
-            .tab(onclick="tab_selector(this,'update-detail')") update my Details
-            .tab(onclick="tab_selector(this,'update-password')") update my Password
-            .tab(onclick="tab_selector(this,'delete-account')") delete my Account
+            .tab(onclick="tab_selector(this,'update-detail')") Update my details
+            .tab(onclick="tab_selector(this,'update-password')") Update my password
+            .tab(onclick="tab_selector(this,'delete-account')") Delete my account
         .form-content
             form#del-acc-form.tab-content.delete-account
                 .form-group
-                label(for='del-password') password:
-                input#del-password(type='password', name='del-password')
-                button(type='submit') delete my account
+                label(for='del-password') Password
+                input#del-password.input-password(type='password', name='del-password')
+                button#delete-account(type='submit') Delete my account
 
             form#update-pass-form.tab-content.update-password
                 .form-group
-                label(for='current-password') current password:
-                input#current-password(name='current_password', type='password')
+                label(for='current-password') Current password
+                .password-input 
+                    input#current-password.input-password(name='current_password', type='password')
+                    button.toggle-password(type='button',data-target="current-password")
+                        i.fa-solid.fa-eye-slash
+
                 .form-group
-                label(for='new-password') new password:
-                input#new-password(name='new_password', type='password')
+                label(for='new-password') New password
+                .password-input 
+                    input#new-password.input-password(name='new_password', type='password')
+                    button.toggle-password(type='button',data-target="new-password")
+                        i.fa-solid.fa-eye-slash
+                    ul#password-criteria
+                        li#length-criteria At least 8 characters
+                        li#uppercase-criteria At least one uppercase letter
+                        li#lowercase-criteria At least one lowercase letter
+                        li#number-criteria At least one number
+                        li#special-char-criteria At least one special character
+
                 .form-group
-                label(for='new-confirm-password') confirm new password:
-                input#new-cofirm-password(name='new_confirmPassword', type='password')
+                label(for='new-confirm-password') Confirm new password
+                .password-input 
+                    input#new-confirm-password.input-password(name='new_confirmPassword', type='password')
+                    button.toggle-password(type='button',data-target="new-confirm-password")
+                        i.fa-solid.fa-eye-slash
                 button(type='submit') Submit
 
             form#update-detail-form.tab-content.update-detail
                 .form-group
-                label(for='username') Name:
+                label(for='username') Name
                 input#name(type='text', name='name', required='',value=`${user.name}`)
                 .form-group
-                label(for='email') Email:
+                label(for='email') Email
                 input#email(type='email', name='email', required='',value=`${user.email}`)
                 .form-group
-                label(for='photo') Choose a new photo:
+                label(for='photo') Choose new profile pic
                 input#update-photo(type='file'  name='photo')
                 .form-group
                 label(for='gender') Gender:
                 if(user.gender==='male')
-                    input#gender-male(type='radio', name='gender', value='male', required='',checked='')
-                    label.gender-male(for='gender-male') Male
-                    input#gender-female(type='radio', name='gender', value='female', required='')
-                    label.gender-female(for='gender-female') Female
+                    .flex
+                        input#gender-male(type='radio', name='gender', value='male', required='',checked='')
+                        label.gender-male(for='gender-male') Male
+                    .flex
+                        input#gender-female(type='radio', name='gender', value='female', required='')
+                        label.gender-female(for='gender-female') Female
                 else
-                    input#gender-male(type='radio', name='gender', value='male', required='')
-                    label.gender-male(for='gender-male') Male
-                    input#gender-female(type='radio', name='gender', value='female', required='',checked='')
-                    label.gender-female(for='gender-female') Female
-                button.save(type='submit') Save
+                    .flex
+                        input#gender-male(type='radio', name='gender', value='male', required='')
+                        label.gender-male(for='gender-male') Male
+                    .flex
+                        input#gender-female(type='radio', name='gender', value='female', required='',checked='')
+                        label.gender-female(for='gender-female') Female
+                button.save(type='submit') Save                                  

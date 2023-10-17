@@ -1,6 +1,7 @@
 extends base
 
 block content
+    include modal.pug
     .image-container
       img(src=`/image/events/${event.photo}`, alt='event image')
     .event-details
@@ -20,9 +21,10 @@ block content
         span=`${event.start.toLocaleString('en-us',{month:'long',day:'numeric',weekday:'short',year:'numeric'})}`
         span=`${event.venue.street},${event.venue.city},${event.venue.state}`
       br
-      p #{event.maxGuestLimit-event.usersRegistered.length} seats remaining
+      p #{event.maxGuestLimit-event.usersRegistered.length} seats remaining | Rs.#{event.entryFee}
       br
-      p=`${event.start.toLocaleTimeString('en-us',{hour:'2-digit',minute:'2-digit'})} - ${event.end.toLocaleTimeString('en-us',{hour:'2-digit',minute:'2-digit'})} | ? hours`
+      - let difference = Math.ceil((event.end-event.start)/(1000*60*60))
+      p=`${event.start.toLocaleTimeString('en-us',{hour:'2-digit',minute:'2-digit'})} - ${event.end.toLocaleTimeString('en-us',{hour:'2-digit',minute:'2-digit'})} | ${difference} hours`
       br
       .content
         .organiser
@@ -37,7 +39,7 @@ block content
             .organiser-action
               a(href=`/updateEvent/${event.id}`)
                 button.primary Update Event 
-              button.red(event-id=event.id,onclick=`deleteEventByOrganiser(this)`) Delete Event
+              button.red(event-id=event.id,onclick=`deleteConfirmation(this)`) Delete Event
         .about
           h4 About
           p= event.description

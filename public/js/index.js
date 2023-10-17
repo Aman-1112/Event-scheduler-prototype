@@ -7,7 +7,27 @@
 
 /***************** Delete By Organiser******************/
 
+function deleteConfirmation(ele){
+    let modalData={
+        title: 'Confirmation',
+        content: 'Are you sure you want to delete this event?'
+    };
 
+    let modal = document.querySelector('.modal');
+    modal.style.display="block";
+
+    let modalContent = document.querySelector('.modal-content');
+    modalContent.querySelector('h2').textContent=modalData.title;
+    modalContent.querySelector('p').textContent=modalData.content;
+
+    let confirmBtn=modal.querySelector('#confirm');
+    confirmBtn.textContent='Delete';
+    confirmBtn.style.backgroundColor="#f44336";
+    confirmBtn.addEventListener('click',()=>{
+        deleteEventByOrganiser(ele);
+        removeModal();
+    })
+}
 const deleteEventByOrganiser = async (ele)=>{
     let eventId = ele.getAttribute('event-id')
     try {
@@ -172,14 +192,55 @@ if(document.querySelector('.logout-btn')){
     })
 }
 
+function passwordValidate(value) {
+    const password = value;
+    
+    // Define your password criteria here
+    const minLength = 8;
+    const hasUppercase = /[A-Z]/.test(password);
+    const hasLowercase = /[a-z]/.test(password);
+    const hasNumber = /\d/.test(password);
+    const hasSpecialChar = /[!@#$%^&*]/.test(password);
+    
+    
+    // Update the criteria messages
+    document.getElementById('length-criteria').style.color = password.length >= minLength ? 'green' : 'red';
+    document.getElementById('uppercase-criteria').style.color = hasUppercase ? 'green' : 'red';
+    document.getElementById('lowercase-criteria').style.color = hasLowercase ? 'green' : 'red';
+    document.getElementById('number-criteria').style.color = hasNumber ? 'green' : 'red';
+    document.getElementById('special-char-criteria').style.color = hasSpecialChar ? 'green' : 'red';
+}
+const passwordInput = document.getElementById('signup-password');
+if(passwordInput ){
+    passwordInput.addEventListener('input',()=>passwordValidate(passwordInput.value));
+}
+
+const newPasswordInput = document.getElementById('reset-new-password');
+if(newPasswordInput){
+    newPasswordInput.addEventListener('input',()=>passwordValidate(newPasswordInput.value));
+}
+
+const newPasswordInputProfile = document.getElementById('new-password')
+if(newPasswordInputProfile){
+    newPasswordInputProfile.addEventListener('input',()=>passwordValidate(newPasswordInputProfile.value))
+}
+
 if(document.querySelector('.signup-form')){
     document.querySelector('.signup-form').addEventListener('submit',e=>{
         e.preventDefault();
+        let password=document.getElementById('signup-password').value;
+        let cpassword=document.getElementById('signup-confirm-password').value;
+        
+        if(password!=cpassword){
+            showAlert('error','The Password and confirm password did not match')
+            return
+        }
+        
         const formdata=new FormData();
         formdata.append("name",document.getElementById('signup-name').value);
         formdata.append("email",document.getElementById('signup-email').value);
-        formdata.append("password",document.getElementById('signup-password').value);
-        formdata.append("confirmPassword",document.getElementById('signup-confirm-password').value);
+        formdata.append("password",password);
+        formdata.append("confirmPassword",cpassword);
         formdata.append("role",document.getElementById('signup-as').value);
         formdata.append("photo",document.getElementById('signup-photo').files[0]);
 
@@ -213,7 +274,7 @@ if(document.querySelector('#forgot-password-form')){
             console.log(response);
             if(response.status==='success'){
                 let resetBtn=document.querySelector('#reset-link-btn');
-                resetBtn.parentElement.insertAdjacentHTML('afterbegin','<p class=\'reset-link-msg\'>'+response.message+' !!!</p>');
+                resetBtn.parentElement.insertAdjacentHTML('afterbegin','<p class=\'reset-link-msg\'>'+response.message.charAt(0).toUpperCase()+response.message.slice(1)+' !!!</p>');
                 document.getElementById('reset-email').value='';
             }else{
                 showAlert('error',response.error);
@@ -222,17 +283,20 @@ if(document.querySelector('#forgot-password-form')){
             console.error(err);
             showAlert('error',err.error);
         }
-        resetButton.textContent='Send Reset Link';
+        resetButton.textContent='Send reset link';
     })
 }
-//? check url
+
 if(document.getElementById('reset-form')){
     document.getElementById('reset-form').addEventListener('submit',async(e)=>{
         try {
             e.preventDefault();
+            const total = window.location.href.split('/').length;
+            const resetToken = window.location.href.split('/')[total-1];
+
             const newPassword = document.getElementById('reset-new-password').value;
             const newConfirmPassword = document.getElementById('reset-confirm-new-password').value;
-            const res =await fetch('/api/v1/users/resetPassword/:resetToken',{
+            const res =await fetch(`/api/v1/users/resetPassword/${resetToken}`,{
                 method:'PATCH',
                 headers:{
                     'Content-Type':'application/json'
@@ -274,13 +338,13 @@ function tab_selector(ele,className){
 
     ele.classList.add('active');
 
-    document.querySelector(`.${className}`).style.display='block';
+    document.querySelector(`.${className}`).style.display='flex';
+    document.querySelector(`.${className}`).style.flexDirection='column';
+    document.querySelector(`.${className}`).style.textAlign='start';
 }
 
-if(document.querySelector('#del-acc-form'))
-    document.querySelector('#del-acc-form').addEventListener('submit',async(e)=>{
-            e.preventDefault();
-            console.log('delete account successfully');
+async function deleteMyAccount(){
+    console.log('delete account successfully');
             const password =document.querySelector('#del-acc-form #del-password').value;
                     // try {
                         const res =await fetch('/api/v1/users/deleteMyAccount',{
@@ -302,7 +366,7 @@ if(document.querySelector('#del-acc-form'))
                             console.log(response.message);
                             showAlert('error',response.message)
                         }
-})
+}
 
 if(document.querySelector('#update-pass-form'))
     document.querySelector('#update-pass-form').addEventListener('submit',async(e)=>{
@@ -535,6 +599,104 @@ function getRequested(ele,url){
         document.querySelector("[data-id=upcoming]").classList.add('active');
     }
     else{
-        document.querySelector("[data-id=all]").classList.add('active');
+        // document.querySelector("[data-id=all]").classList.add('active');
     }
 })()
+
+const togglebuttons=document.querySelectorAll('.toggle-password')
+
+togglebuttons.forEach(function(button){
+    button.addEventListener('click',function(){
+        targetName=this.getAttribute('data-target')
+        targetElm=document.getElementById(targetName)
+        iconEle=this.querySelector('i')
+        if(targetElm){
+            if(targetElm.type==='password'){
+                targetElm.type='text'
+                iconEle.classList.add('fa-eye')
+                iconEle.classList.remove('fa-eye-slash')
+            }else{
+                targetElm.type='password'
+                iconEle.classList.add('fa-eye-slash')
+                iconEle.classList.remove('fa-eye')
+            }
+        }
+    })
+})
+//   const passwordInput = document.getElementById('signup-password');
+//   const toggleButton = document.querySelector('.toggle-password');
+//   if(passwordInput && toggleButton){
+//       toggleButton.addEventListener('click', function () {
+//         if (passwordInput.type === 'password') {
+//           passwordInput.type = 'text'; 
+//         } else {
+//           passwordInput.type = 'password';
+//         }
+//       });
+//   }
+
+/*************************************************Modal******************* */
+if(document.querySelector('#del-acc-form')){
+    console.log("Added the eventlistener")
+    document.querySelector('#del-acc-form').addEventListener('submit',(e)=>{
+
+        e.preventDefault();
+
+        let modalData={
+            title: 'Confirmation',
+            content: 'Are you sure you want to delete your account?'
+        };
+
+        let modal = document.querySelector('.modal');
+        modal.style.display="block";
+
+        let modalContent = document.querySelector('.modal-content');
+        modalContent.querySelector('h2').textContent=modalData.title;
+        modalContent.querySelector('p').textContent=modalData.content;
+
+        let confirmBtn=modal.querySelector('#confirm');
+        confirmBtn.textContent='Delete';
+        confirmBtn.style.backgroundColor="#f44336";
+        confirmBtn.addEventListener('click',()=>{
+            deleteMyAccount();
+            removeModal();
+        })
+    })
+}
+
+function removeModal(){
+    console.log("removing modal...")
+
+    let modal = document.querySelector('.modal');
+    modal.style.display="none";
+
+    let confirmBtn=modal.querySelector('#confirm');
+    confirmBtn.textContent='Confirm';
+    confirmBtn.removeEventListener('click',()=>{
+        deleteMyAccount();
+        removeModal();
+    })
+    confirmBtn.style.backgroundColor="#007bff";
+
+}
+
+const closeModal=document.querySelector('#close-modal');
+if(closeModal){
+    closeModal.addEventListener('click',()=>removeModal())
+}
+
+const cancelModal=document.querySelector('#cancel');
+if(cancelModal){
+    cancelModal.addEventListener('click',()=>removeModal())
+}
+
+
+if(window.location.href.includes('venue.city'))
+{
+    let city = window.location.href.split('=')[1];
+    document.querySelectorAll('#city-option').forEach(ele=>{
+        if(ele.getAttribute('value')===city){
+            ele.setAttribute('selected',true)
+        }
+    })
+}

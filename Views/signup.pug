@@ -1,7 +1,7 @@
 extends base
 block content
     .container
-      h1 Sign Up
+      h1 Sign up
       form.signup-form
         .form-group
           label(for='name') Name:
@@ -10,25 +10,39 @@ block content
           label(for='email') Email:
           input#signup-email(type='email', name='email', required='')
         .form-group
-          label(for='photo') Choose a photo:
+          label(for='photo') Choose profile pic:
           input#signup-photo(type='file'  name='photo')
         .form-group
           label(for='gender') Gender:
-          input#gender-male(type='radio', name='gender', value='male', required='')
-          label.gender-male(for='gender-male') Male
-           
-          input#gender-female(type='radio', name='gender', value='female', required='')
-          label.gender-female(for='gender-female') Female
+          div
+            input#gender-male(type='radio', name='gender', value='male', required='')
+            label.gender-male(for='gender-male') Male
+          div
+            input#gender-female(type='radio', name='gender', value='female', required='')
+            label.gender-female(for='gender-female') Female
         .form-group
           label(for='password') Password:
-          input#signup-password(type='password', name='password', required='')
+          div.password-input
+            input#signup-password.input-password(type='password', name='password', required='')
+            button.toggle-password(type='button',data-target="signup-password")
+              i.fa-solid.fa-eye-slash 
+            ul#password-criteria
+              li#length-criteria At least 8 characters
+              li#uppercase-criteria At least one uppercase letter
+              li#lowercase-criteria At least one lowercase letter
+              li#number-criteria At least one number
+              li#special-char-criteria At least one special character
+
         .form-group
-          label(for='confirm-password') Confirm Password:
-          input#signup-confirm-password(type='password', name='confirm-password', required='')
+          label(for='confirm-password') Confirm password:
+          div.password-input
+            input#signup-confirm-password.input-password(type='password', name='confirm-password', required='')
+            button.toggle-password(type='button',data-target="signup-confirm-password")
+                i.fa-solid.fa-eye-slash
         .form-group
-          label(for='signup-as') Signup As:
+          label(for='signup-as') Signup as:
           select#signup-as(name='signup-as', required='')
             option(value='user') User
             option(value='organiser') Organiser
             // option(value='admin') Admin
-        button(type='submit') Sign Up
+        button(type='submit') Sign up

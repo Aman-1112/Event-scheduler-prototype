@@ -37,9 +37,10 @@ module.exports = class Email {
         })
         return this.sendEmail(html,'Reset Your Password')
     }
-    sendBookingConfirmation(){
+    sendBookingConfirmation(myevent){
         const html = pug.renderFile(path.join(__dirname,'../Views/bookingEmailTemplate.pug'),{
-            message:this.message
+            message:this.message,
+            event : myevent
         });
         return this.sendEmail(html,'Booking Confirmation')
     }

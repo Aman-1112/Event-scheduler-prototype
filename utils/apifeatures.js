@@ -43,7 +43,7 @@ class ApiFeatures {
 			this.query = this.query.sort(sort);
 		} else {
 			// this.query = this.query.sort('createdAt');
-			this.query = this.query.sort('start');
+			this.query = this.query.sort({'start':-1});
 		}
 		return this;
 	}

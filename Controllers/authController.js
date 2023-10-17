@@ -55,11 +55,13 @@ exports.Signup = async (req, res) => {
 		// });
 	} catch (e) {
 		console.log(e);
+		console.log("Error===" ,e.message)
 		let message;
 		if(e.code===11000){
 			message=`This ${Object.keys(e.keyValue)[0]} already exists`;
 		}else{
-			message=e.message;
+			last = e.message.split(":").length
+			message=e.message.split(":")[last-1];
 		}
 		res.status(400).json({
 			status: 'fail',
@@ -221,7 +223,7 @@ exports.forgotPassword = async (req, res) => {
 		const user = await userModel.findOne({ email: req.body.email });
 		// checking for the valid email and getting user
 		if (!user) throw new Error('User with this email doesn\'t exist');
-
+		console.log("generating...reset token")
 		// generate resetToken
 		const resetToken = await user.generateResetToken();
 		try {
@@ -232,7 +234,7 @@ exports.forgotPassword = async (req, res) => {
 			// sending the resetPasswordLink to the email
 			const resetLink = `${req.protocol}://${req.get(
 				'host'
-			)}/${resetToken}`;
+			)}/resetPassword/${resetToken}`;
 			const message =
 				'Reset your password through given below link (valid for 5min)';
 			const eml= new Email(user,resetLink,message);
